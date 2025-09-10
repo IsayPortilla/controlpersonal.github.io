@@ -1024,7 +1024,7 @@
             auth.signOut();
         }
 
-        // Agregar un nuevo usuario a Firestore
+        // Agregar un nuevo usuario to Firestore
         function agregarUsuario(e) {
             e.preventDefault();
 
@@ -1492,7 +1492,7 @@
 
                 // Obtener información de usuarios para los movimientos
                 const userIds = new Set();
-                allMovimientos.forEach(movimiento => {
+                allMovements.forEach(movimiento => {
                     userIds.add(movimiento.userId);
                     userIds.add(movimiento.responsableId);
                 });
@@ -1515,7 +1515,7 @@
                     const headers = [["Usuario", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"]];
                     const datos = [];
 
-                    allMovimientos.forEach(movimiento => {
+                    allMovements.forEach(movimiento => {
                         const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
                         const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
                         const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
@@ -1584,7 +1584,7 @@
             } else if (tipo === 'movimientos') {
                 // Obtener información de usuarios para los movimientos
                 const userIds = new Set();
-                allMovimientos.forEach(movimiento => {
+                allMovements.forEach(movimiento => {
                     userIds.add(movimiento.userId);
                     userIds.add(movimiento.responsableId);
                 });
@@ -1608,7 +1608,7 @@
                     const headers = ["Usuario", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"];
                     datos.push(headers);
 
-                    allMovimientos.forEach(movimiento => {
+                    allMovements.forEach(movimiento => {
                         const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
                         const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
                         const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
