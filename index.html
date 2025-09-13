@@ -11,11 +11,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
+        /* Estilos existentes (sin cambios) */
         :root {
             --color-oficina: #4CAF50;
             --color-muestreo: #FF9800;
             --color-salidaSR: #F44336;
             --color-salidaCR: #5C6BC0;
+            --color-descanso: #9C27B0;        /* Nuevo: color para descanso */
+            --color-vacaciones: #009688;      /* Nuevo: color para vacaciones */
+            --color-vacacionesTxt: #795548;   /* Nuevo: color para vacaciones TxT */
             --color-primary: #2c3e50;
             --color-secondary: #3498db;
             --color-light: #ecf0f1;
@@ -186,6 +190,19 @@
 
         .status-salidaCR {
             background-color: var(--color-salidaCR);
+        }
+        
+        /* Nuevos estilos para estados */
+        .status-descanso {
+            background-color: var(--color-descanso);
+        }
+        
+        .status-vacaciones {
+            background-color: var(--color-vacaciones);
+        }
+        
+        .status-vacacionesTxt {
+            background-color: var(--color-vacacionesTxt);
         }
 
         .loading {
@@ -431,6 +448,19 @@
         .status-btn.salidaCR {
             background-color: var(--color-salidaCR);
         }
+        
+        /* Nuevos botones de estado */
+        .status-btn.descanso {
+            background-color: var(--color-descanso);
+        }
+        
+        .status-btn.vacaciones {
+            background-color: var(--color-vacaciones);
+        }
+        
+        .status-btn.vacacionesTxt {
+            background-color: var(--color-vacacionesTxt);
+        }
 
         @media (max-width: 768px) {
             .filters {
@@ -623,6 +653,9 @@
                                     <option value="muestreo">Muestreo</option>
                                     <option value="salidaSR">Salida sin regreso</option>
                                     <option value="salidaCR">Salida con regreso</option>
+                                    <option value="descanso">Descanso</option>
+                                    <option value="vacaciones">Vacaciones</option>
+                                    <option value="vacacionesTxt">Vacaciones TxT</option>
                                 </select>
                             </div>
                         </div>
@@ -680,6 +713,9 @@
                             <option value="muestreo">Muestreo</option>
                             <option value="salidaSR">Salida Sin Regreso</option>
                             <option value="salidaCR">Salida con regreso</option>
+                            <option value="descanso">Descanso</option>
+                            <option value="vacaciones">Vacaciones</option>
+                            <option value="vacacionesTxt">Vacaciones TxT</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" id="btnFilterCards">Filtrar</button>
@@ -692,6 +728,9 @@
                         <button class="status-btn muestreo" data-status="muestreo">Muestreo</button>
                         <button class="status-btn salidaSR" data-status="salidaSR">Salida Sin Regreso</button>
                         <button class="status-btn salidaCR" data-status="salidaCR">Salida Con Regreso</button>
+                        <button class="status-btn descanso" data-status="descanso">Descanso</button>
+                        <button class="status-btn vacaciones" data-status="vacaciones">Vacaciones</button>
+                        <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Vacaciones TxT</button>
                     </div>
                 </div>
 
@@ -767,12 +806,15 @@
         movementStartDate.valueAsDate = new Date(today.getFullYear(), today.getMonth(), 1);
         movementEndDate.valueAsDate = today;
 
-        // Estado de usuarios
+        // Estado de usuarios (con los nuevos estados agregados)
         const estados = {
             oficina: { texto: 'Oficina', clase: 'status-oficina' },
             muestreo: { texto: 'Muestreo', clase: 'status-muestreo' },
             salidaSR: { texto: 'Salida S/R', clase: 'status-salidaSR' },
-            salidaCR: { texto: 'Salida C/R', clase: 'status-salidaCR' }
+            salidaCR: { texto: 'Salida C/R', clase: 'status-salidaCR' },
+            descanso: { texto: 'Descanso', clase: 'status-descanso' },
+            vacaciones: { texto: 'Vacaciones', clase: 'status-vacaciones' },
+            vacacionesTxt: { texto: 'Vacaciones TxT', clase: 'status-vacacionesTxt' }
         };
 
         // Inicializar la aplicación
@@ -1132,6 +1174,9 @@
                                     <option value="muestreo">Muestreo</option>
                                     <option value="salidaSR">Salida Sin Regreso</option>
                                     <option value="salidaCR">Salida con regreso</option>
+                                    <option value="descanso">Descanso</option>
+                                    <option value="vacaciones">Vacaciones</option>
+                                    <option value="vacacionesTxt">Vacaciones TxT</option>
                                 </select>
                             </td>
                         `;
@@ -1439,8 +1484,98 @@
                 });
         }
 
+        // Obtener rango de fechas según el periodo seleccionado
+        function obtenerRangoFechas(periodo, fechaBase) {
+            const fecha = new Date(fechaBase);
+            let inicio, fin;
+            
+            switch (periodo) {
+                case 'diario':
+                    inicio = new Date(fecha);
+                    inicio.setHours(0, 0, 0, 0);
+                    fin = new Date(fecha);
+                    fin.setHours(23, 59, 59, 999);
+                    break;
+                case 'semanal':
+                    // Obtener el lunes de la semana
+                    const diaSemana = fecha.getDay();
+                    const diffLunes = fecha.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+                    inicio = new Date(fecha.setDate(diffLunes));
+                    inicio.setHours(0, 0, 0, 0);
+                    
+                    // Obtener el domingo de la semana
+                    fin = new Date(inicio);
+                    fin.setDate(inicio.getDate() + 6);
+                    fin.setHours(23, 59, 59, 999);
+                    break;
+                case 'mensual':
+                    inicio = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+                    inicio.setHours(0, 0, 0, 0);
+                    fin = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+                    fin.setHours(23, 59, 59, 999);
+                    break;
+                default:
+                    inicio = new Date(fecha);
+                    inicio.setHours(0, 0, 0, 0);
+                    fin = new Date(fecha);
+                    fin.setHours(23, 59, 59, 999);
+            }
+            
+            return { inicio, fin };
+        }
+
+        // Obtener movimientos para el reporte
+        async function obtenerMovimientosParaReporte(periodo, fecha) {
+            const { inicio, fin } = obtenerRangoFechas(periodo, fecha);
+            
+            try {
+                const querySnapshot = await db.collection("movimientos")
+                    .where("fecha", ">=", inicio)
+                    .where("fecha", "<=", fin)
+                    .orderBy("fecha", "asc")
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    return [];
+                }
+                
+                const movimientos = [];
+                const userIds = new Set();
+                
+                querySnapshot.forEach(doc => {
+                    const movimiento = doc.data();
+                    movimientos.push({
+                        ...movimiento,
+                        fecha: movimiento.fecha.toDate()
+                    });
+                    userIds.add(movimiento.userId);
+                });
+                
+                // Obtener información de usuarios
+                const usersInfo = {};
+                for (const userId of userIds) {
+                    const userDoc = await db.collection("usuarios").doc(userId).get();
+                    if (userDoc.exists) {
+                        usersInfo[userId] = userDoc.data().nombre;
+                    } else {
+                        usersInfo[userId] = "Usuario desconocido";
+                    }
+                }
+                
+                // Agregar nombre de usuario a cada movimiento
+                movimientos.forEach(movimiento => {
+                    movimiento.nombreUsuario = usersInfo[movimiento.userId];
+                });
+                
+                return movimientos;
+            } catch (error) {
+                console.error("Error al obtener movimientos para reporte:", error);
+                return [];
+            }
+        }
+
         // Generar reporte en PDF
-        function generarPDF(tipo) {
+        async function generarPDF(tipo) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
@@ -1448,37 +1583,92 @@
             const fecha = fechaInput.value;
 
             if (tipo === 'personal') {
+                // Obtener movimientos para el periodo seleccionado
+                const movimientos = await obtenerMovimientosParaReporte(periodo, fecha);
+                
+                // Agrupar movimientos por usuario
+                const movimientosPorUsuario = {};
+                movimientos.forEach(movimiento => {
+                    if (!movimientosPorUsuario[movimiento.nombreUsuario]) {
+                        movimientosPorUsuario[movimiento.nombreUsuario] = [];
+                    }
+                    movimientosPorUsuario[movimiento.nombreUsuario].push(movimiento);
+                });
+
                 // Título del reporte
                 doc.setFontSize(18);
                 doc.text(`Reporte de Personal - ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}`, 14, 15);
                 doc.setFontSize(12);
                 doc.text(`Fecha: ${fecha}`, 14, 22);
 
-                // Obtener datos de la tabla
-                const headers = [["Nombre", "Email", "Estado", "Última actualización", "Ubicación"]];
-                const datos = [];
+                let yPos = 30;
+                const pageHeight = doc.internal.pageSize.height;
+                const margin = 14;
 
-                const filas = tableBody.querySelectorAll('tr');
-                filas.forEach(fila => {
-                    const celdas = fila.querySelectorAll('td');
-                    if (celdas.length > 0) {
-                        datos.push([
-                            celdas[0].textContent,
-                            celdas[1].textContent,
-                            celdas[2].textContent,
-                            celdas[3].textContent,
-                            celdas[4].textContent
-                        ]);
+                // Para cada usuario, crear una sección
+                Object.keys(movimientosPorUsuario).sort().forEach(usuario => {
+                    // Verificar si necesitamos una nueva página
+                    if (yPos > pageHeight - 50) {
+                        doc.addPage();
+                        yPos = margin;
                     }
-                });
 
-                // Generar tabla en el PDF
-                doc.autoTable({
-                    head: headers,
-                    body: datos,
-                    startY: 30,
-                    styles: { fontSize: 9 },
-                    headStyles: { fillColor: [44, 62, 80] }
+                    // Nombre del usuario
+                    doc.setFontSize(14);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(usuario, margin, yPos);
+                    yPos += 8;
+
+                    // Encabezados de la tabla
+                    const headers = ["Fecha", "Estado"];
+                    let xPos = margin;
+                    
+                    doc.setFontSize(10);
+                    doc.setFont(undefined, 'bold');
+                    
+                    // Dibujar encabezados
+                    headers.forEach(header => {
+                        doc.text(header, xPos, yPos);
+                        xPos += 40;
+                    });
+                    
+                    yPos += 6;
+                    
+                    // Línea separadora
+                    doc.line(margin, yPos, 200, yPos);
+                    yPos += 4;
+
+                    // Movimientos del usuario
+                    doc.setFont(undefined, 'normal');
+                    movimientosPorUsuario[usuario].forEach(movimiento => {
+                        // Verificar si necesitamos una nueva página
+                        if (yPos > pageHeight - 20) {
+                            doc.addPage();
+                            yPos = margin;
+                            
+                            // Redibujar encabezados en la nueva página
+                            doc.setFont(undefined, 'bold');
+                            xPos = margin;
+                            headers.forEach(header => {
+                                doc.text(header, xPos, yPos);
+                                xPos += 40;
+                            });
+                            yPos += 6;
+                            doc.line(margin, yPos, 200, yPos);
+                            yPos += 4;
+                            doc.setFont(undefined, 'normal');
+                        }
+                        
+                        // Fecha del movimiento
+                        doc.text(movimiento.fecha.toLocaleString(), margin, yPos);
+                        
+                        // Estado del movimiento
+                        doc.text(estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo, margin + 40, yPos);
+                        
+                        yPos += 6;
+                    });
+                    
+                    yPos += 10; // Espacio entre usuarios
                 });
 
                 // Guardar el PDF
@@ -1548,36 +1738,49 @@
         }
 
         // Generar reporte en Excel
-        function generarExcel(tipo) {
+        async function generarExcel(tipo) {
             const periodo = periodoSelect.value;
             const fecha = fechaInput.value;
 
             if (tipo === 'personal') {
-                // Preparar datos
-                const datos = [];
-                const headers = ["Nombre", "Email", "Estado", "Última actualización", "Ubicación"];
-                datos.push(headers);
-
-                const filas = tableBody.querySelectorAll('tr');
-                filas.forEach(fila => {
-                    const celdas = fila.querySelectorAll('td');
-                    if (celdas.length > 0) {
-                        datos.push([
-                            celdas[0].textContent,
-                            celdas[1].textContent,
-                            celdas[2].textContent,
-                            celdas[3].textContent,
-                            celdas[4].textContent
-                        ]);
+                // Obtener movimientos para el periodo seleccionado
+                const movimientos = await obtenerMovimientosParaReporte(periodo, fecha);
+                
+                // Agrupar movimientos por usuario
+                const movimientosPorUsuario = {};
+                movimientos.forEach(movimiento => {
+                    if (!movimientosPorUsuario[movimiento.nombreUsuario]) {
+                        movimientosPorUsuario[movimiento.nombreUsuario] = [];
                     }
+                    movimientosPorUsuario[movimiento.nombreUsuario].push(movimiento);
                 });
 
-                // Crear libro de trabajo y hoja
+                // Crear libro de trabajo
                 const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet(datos);
 
-                // Añadir hoja al libro
-                XLSX.utils.book_append_sheet(wb, ws, "Reporte Personal");
+                // Para cada usuario, crear una hoja
+                Object.keys(movimientosPorUsuario).sort().forEach(usuario => {
+                    // Preparar datos para Excel
+                    const datos = [];
+                    
+                    // Encabezados
+                    datos.push(["Fecha", "Estado Anterior", "Estado Nuevo", "Ubicación", "Responsable"]);
+                    
+                    // Movimientos del usuario
+                    movimientosPorUsuario[usuario].forEach(movimiento => {
+                        datos.push([
+                            movimiento.fecha.toLocaleString(),
+                            estados[movimiento.estadoAnterior]?.texto || movimiento.estadoAnterior || 'N/A',
+                            estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo || 'N/A',
+                            movimiento.ubicacion || "No registrada",
+                            movimiento.responsableId // Aquí podrías agregar el nombre del responsable si lo tienes
+                        ]);
+                    });
+                    
+                    // Crear hoja y añadir al libro
+                    const ws = XLSX.utils.aoa_to_sheet(datos);
+                    XLSX.utils.book_append_sheet(wb, ws, usuario.substring(0, 30)); // Limitar longitud del nombre de hoja
+                });
 
                 // Guardar archivo
                 XLSX.writeFile(wb, `reporte_personal_${periodo}_${fecha}.xlsx`);
