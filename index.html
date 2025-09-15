@@ -104,6 +104,16 @@
         .btn-danger:hover {
             background-color: #c0392b;
         }
+        
+        /* Nuevo estilo para botón de descanso masivo */
+        .btn-descanso-all {
+            background-color: var(--color-descanso);
+            color: white;
+        }
+        
+        .btn-descanso-all:hover {
+            background-color: #7b1fa2;
+        }
 
         .filters {
             background-color: white;
@@ -719,6 +729,8 @@
                         </select>
                     </div>
                     <button class="btn btn-primary" id="btnFilterCards">Filtrar</button>
+                    <!-- Nuevo botón para cambiar todos a descanso -->
+                    <button class="btn btn-descanso-all" id="btnAllToRest">Todos a Descanso</button>
                 </div>
 
                 <div class="status-options" id="statusOptions">
@@ -792,6 +804,7 @@
         const selectedUserName = document.getElementById('selectedUserName');
         const userCards = document.getElementById('user-cards');
         const statusButtons = document.querySelectorAll('.status-btn');
+        const btnAllToRest = document.getElementById('btnAllToRest'); // Nuevo botón
 
         // Variables de estado
         let isLoginMode = true;
@@ -893,6 +906,9 @@
 
             // Recuadros
             btnFilterCards.addEventListener('click', cargarUsuariosParaRecuadros);
+            
+            // Nuevo botón para cambiar todos a descanso
+            btnAllToRest.addEventListener('click', cambiarTodosADescanso);
 
             // Botones de cambio de estado
             statusButtons.forEach(button => {
@@ -901,6 +917,67 @@
                     cambiarEstadoUsuario(selectedUserId, nuevoEstado);
                 });
             });
+        }
+
+        // Función para cambiar todos los usuarios a estado "Descanso"
+        function cambiarTodosADescanso() {
+            if (!confirm('¿Está seguro de que desea cambiar el estado de TODOS los usuarios a "Descanso"? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            // Obtener todos los usuarios
+            db.collection("usuarios").where("nombre", "!=", "Usuario").get()
+                .then((querySnapshot) => {
+                    const batch = db.batch();
+                    const updates = [];
+                    
+                    querySnapshot.forEach((doc) => {
+                        const usuario = doc.data();
+                        const estadoAnterior = usuario.estado;
+                        
+                        // Solo actualizar si no está ya en descanso
+                        if (estadoAnterior !== "descanso") {
+                            const userRef = db.collection("usuarios").doc(doc.id);
+                            batch.update(userRef, {
+                                estado: "descanso",
+                                ultimaActualizacion: new Date()
+                            });
+                            
+                            updates.push({
+                                userId: doc.id,
+                                estadoAnterior: estadoAnterior,
+                                estadoNuevo: "descanso"
+                            });
+                        }
+                    });
+                    
+                    // Ejecutar todas las actualizaciones en lote
+                    return batch.commit().then(() => {
+                        // Registrar todos los movimientos
+                        const movimientoPromises = updates.map(update => {
+                            return registrarMovimiento(
+                                update.userId, 
+                                update.estadoAnterior, 
+                                update.estadoNuevo, 
+                                "Cambio masivo a descanso", 
+                                currentUser.uid
+                            );
+                        });
+                        
+                        return Promise.all(movimientoPromises);
+                    });
+                })
+                .then(() => {
+                    alert('Todos los usuarios han sido cambiados a estado "Descanso"');
+                    
+                    // Recargar las vistas
+                    cargarUsuarios();
+                    cargarUsuariosParaRecuadros();
+                })
+                .catch((error) => {
+                    console.error("Error al cambiar todos a descanso:", error);
+                    alert("Error al cambiar los estados: " + error.message);
+                });
         }
 
         // Alternar entre login y registro
@@ -1111,30 +1188,39 @@
 
         // Registrar movimiento en el historial
         function registrarMovimiento(userId, estadoAnterior, estadoNuevo, motivo, responsableId) {
-            obtenerUbicacion().then(ubicacion => {
-                db.collection("movimientos").add({
-                    userId: userId,
-                    estadoAnterior: estadoAnterior,
-                    estadoNuevo: estadoNuevo,
-                    fecha: new Date(),
-                    motivo: motivo,
-                    responsableId: responsableId,
-                    ubicacion: ubicacion
-                })
-                .catch(error => {
-                    console.error("Error al registrar movimiento:", error);
-                });
-            }).catch(error => {
-                console.error("Error al obtener ubicación:", error);
-                // Registrar movimiento sin ubicación si hay error
-                db.collection("movimientos").add({
-                    userId: userId,
-                    estadoAnterior: estadoAnterior,
-                    estadoNuevo: estadoNuevo,
-                    fecha: new Date(),
-                    motivo: motivo,
-                    responsableId: responsableId,
-                    ubicacion: "Ubicación no disponible"
+            return new Promise((resolve, reject) => {
+                obtenerUbicacion().then(ubicacion => {
+                    db.collection("movimientos").add({
+                        userId: userId,
+                        estadoAnterior: estadoAnterior,
+                        estadoNuevo: estadoNuevo,
+                        fecha: new Date(),
+                        motivo: motivo,
+                        responsableId: responsableId,
+                        ubicacion: ubicacion
+                    })
+                    .then(() => resolve())
+                    .catch(error => {
+                        console.error("Error al registrar movimiento:", error);
+                        reject(error);
+                    });
+                }).catch(error => {
+                    console.error("Error al obtener ubicación:", error);
+                    // Registrar movimiento sin ubicación si hay error
+                    db.collection("movimientos").add({
+                        userId: userId,
+                        estadoAnterior: estadoAnterior,
+                        estadoNuevo: estadoNuevo,
+                        fecha: new Date(),
+                        motivo: motivo,
+                        responsableId: responsableId,
+                        ubicacion: "Ubicación no disponible"
+                    })
+                    .then(() => resolve())
+                    .catch(error => {
+                        console.error("Error al registrar movimiento:", error);
+                        reject(error);
+                    });
                 });
             });
         }
