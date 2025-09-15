@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        /* Estilos existentes (sin cambios) */
+        /* Estilos existentes (con el nuevo estado agregado) */
         :root {
             --color-oficina: #4CAF50;
             --color-muestreo: #FF9800;
@@ -20,6 +20,7 @@
             --color-descanso: #9C27B0;        /* Nuevo: color para descanso */
             --color-vacaciones: #009688;      /* Nuevo: color para vacaciones */
             --color-vacacionesTxt: #795548;   /* Nuevo: color para vacaciones TxT */
+            --color-salida: #607D8B;          /* Nuevo: color para salida */
             --color-primary: #2c3e50;
             --color-secondary: #3498db;
             --color-light: #ecf0f1;
@@ -103,16 +104,6 @@
 
         .btn-danger:hover {
             background-color: #c0392b;
-        }
-        
-        /* Nuevo estilo para botón de descanso masivo */
-        .btn-descanso-all {
-            background-color: var(--color-descanso);
-            color: white;
-        }
-        
-        .btn-descanso-all:hover {
-            background-color: #7b1fa2;
         }
 
         .filters {
@@ -213,6 +204,10 @@
         
         .status-vacacionesTxt {
             background-color: var(--color-vacacionesTxt);
+        }
+        
+        .status-salida {
+            background-color: var(--color-salida);
         }
 
         .loading {
@@ -471,6 +466,10 @@
         .status-btn.vacacionesTxt {
             background-color: var(--color-vacacionesTxt);
         }
+        
+        .status-btn.salida {
+            background-color: var(--color-salida);
+        }
 
         @media (max-width: 768px) {
             .filters {
@@ -661,11 +660,12 @@
                                 <select id="newUserStatus" required>
                                     <option value="oficina">Oficina</option>
                                     <option value="muestreo">Muestreo</option>
-                                    <option value="salidaSR">Salida intermitente</option>
+                                    <option value="salidaSR">Salida sin regreso</option>
                                     <option value="salidaCR">Salida con regreso</option>
                                     <option value="descanso">Descanso</option>
                                     <option value="vacaciones">Vacaciones</option>
                                     <option value="vacacionesTxt">Vacaciones TxT</option>
+                                    <option value="salida">Salida</option>
                                 </select>
                             </div>
                         </div>
@@ -721,16 +721,15 @@
                             <option value="todos">Todos</option>
                             <option value="oficina">Oficina</option>
                             <option value="muestreo">Muestreo</option>
-                            <option value="salidaSR">Salida intermitente</option>
+                            <option value="salidaSR">Salida Sin Regreso</option>
                             <option value="salidaCR">Salida con regreso</option>
                             <option value="descanso">Descanso</option>
                             <option value="vacaciones">Vacaciones</option>
                             <option value="vacacionesTxt">Vacaciones TxT</option>
+                            <option value="salida">Salida</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" id="btnFilterCards">Filtrar</button>
-                    <!-- Nuevo botón para cambiar todos a descanso -->
-                    <button class="btn btn-descanso-all" id="btnAllToRest">Todos a Descanso</button>
                 </div>
 
                 <div class="status-options" id="statusOptions">
@@ -738,11 +737,12 @@
                     <div class="status-buttons">
                         <button class="status-btn oficina" data-status="oficina">Oficina</button>
                         <button class="status-btn muestreo" data-status="muestreo">Muestreo</button>
-                        <button class="status-btn salidaSR" data-status="salidaSR">Salida Intermitente</button>
+                        <button class="status-btn salidaSR" data-status="salidaSR">Salida Sin Regreso</button>
                         <button class="status-btn salidaCR" data-status="salidaCR">Salida Con Regreso</button>
                         <button class="status-btn descanso" data-status="descanso">Descanso</button>
                         <button class="status-btn vacaciones" data-status="vacaciones">Vacaciones</button>
                         <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Vacaciones TxT</button>
+                        <button class="status-btn salida" data-status="salida">Salida</button>
                     </div>
                 </div>
 
@@ -804,7 +804,6 @@
         const selectedUserName = document.getElementById('selectedUserName');
         const userCards = document.getElementById('user-cards');
         const statusButtons = document.querySelectorAll('.status-btn');
-        const btnAllToRest = document.getElementById('btnAllToRest'); // Nuevo botón
 
         // Variables de estado
         let isLoginMode = true;
@@ -827,7 +826,8 @@
             salidaCR: { texto: 'Salida C/R', clase: 'status-salidaCR' },
             descanso: { texto: 'Descanso', clase: 'status-descanso' },
             vacaciones: { texto: 'Vacaciones', clase: 'status-vacaciones' },
-            vacacionesTxt: { texto: 'Vacaciones TxT', clase: 'status-vacacionesTxt' }
+            vacacionesTxt: { texto: 'Vacaciones TxT', clase: 'status-vacacionesTxt' },
+            salida: { texto: 'Salida', clase: 'status-salida' }
         };
 
         // Inicializar la aplicación
@@ -906,9 +906,6 @@
 
             // Recuadros
             btnFilterCards.addEventListener('click', cargarUsuariosParaRecuadros);
-            
-            // Nuevo botón para cambiar todos a descanso
-            btnAllToRest.addEventListener('click', cambiarTodosADescanso);
 
             // Botones de cambio de estado
             statusButtons.forEach(button => {
@@ -917,67 +914,6 @@
                     cambiarEstadoUsuario(selectedUserId, nuevoEstado);
                 });
             });
-        }
-
-        // Función para cambiar todos los usuarios a estado "Descanso"
-        function cambiarTodosADescanso() {
-            if (!confirm('¿Está seguro de que desea cambiar el estado de TODOS los usuarios a "Descanso"? Esta acción no se puede deshacer.')) {
-                return;
-            }
-
-            // Obtener todos los usuarios
-            db.collection("usuarios").where("nombre", "!=", "Usuario").get()
-                .then((querySnapshot) => {
-                    const batch = db.batch();
-                    const updates = [];
-                    
-                    querySnapshot.forEach((doc) => {
-                        const usuario = doc.data();
-                        const estadoAnterior = usuario.estado;
-                        
-                        // Solo actualizar si no está ya en descanso
-                        if (estadoAnterior !== "descanso") {
-                            const userRef = db.collection("usuarios").doc(doc.id);
-                            batch.update(userRef, {
-                                estado: "descanso",
-                                ultimaActualizacion: new Date()
-                            });
-                            
-                            updates.push({
-                                userId: doc.id,
-                                estadoAnterior: estadoAnterior,
-                                estadoNuevo: "descanso"
-                            });
-                        }
-                    });
-                    
-                    // Ejecutar todas las actualizaciones en lote
-                    return batch.commit().then(() => {
-                        // Registrar todos los movimientos
-                        const movimientoPromises = updates.map(update => {
-                            return registrarMovimiento(
-                                update.userId, 
-                                update.estadoAnterior, 
-                                update.estadoNuevo, 
-                                "Cambio masivo a descanso", 
-                                currentUser.uid
-                            );
-                        });
-                        
-                        return Promise.all(movimientoPromises);
-                    });
-                })
-                .then(() => {
-                    alert('Todos los usuarios han sido cambiados a estado "Descanso"');
-                    
-                    // Recargar las vistas
-                    cargarUsuarios();
-                    cargarUsuariosParaRecuadros();
-                })
-                .catch((error) => {
-                    console.error("Error al cambiar todos a descanso:", error);
-                    alert("Error al cambiar los estados: " + error.message);
-                });
         }
 
         // Alternar entre login y registro
@@ -1188,39 +1124,30 @@
 
         // Registrar movimiento en el historial
         function registrarMovimiento(userId, estadoAnterior, estadoNuevo, motivo, responsableId) {
-            return new Promise((resolve, reject) => {
-                obtenerUbicacion().then(ubicacion => {
-                    db.collection("movimientos").add({
-                        userId: userId,
-                        estadoAnterior: estadoAnterior,
-                        estadoNuevo: estadoNuevo,
-                        fecha: new Date(),
-                        motivo: motivo,
-                        responsableId: responsableId,
-                        ubicacion: ubicacion
-                    })
-                    .then(() => resolve())
-                    .catch(error => {
-                        console.error("Error al registrar movimiento:", error);
-                        reject(error);
-                    });
-                }).catch(error => {
-                    console.error("Error al obtener ubicación:", error);
-                    // Registrar movimiento sin ubicación si hay error
-                    db.collection("movimientos").add({
-                        userId: userId,
-                        estadoAnterior: estadoAnterior,
-                        estadoNuevo: estadoNuevo,
-                        fecha: new Date(),
-                        motivo: motivo,
-                        responsableId: responsableId,
-                        ubicacion: "Ubicación no disponible"
-                    })
-                    .then(() => resolve())
-                    .catch(error => {
-                        console.error("Error al registrar movimiento:", error);
-                        reject(error);
-                    });
+            obtenerUbicacion().then(ubicacion => {
+                db.collection("movimientos").add({
+                    userId: userId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: estadoNuevo,
+                    fecha: new Date(),
+                    motivo: motivo,
+                    responsableId: responsableId,
+                    ubicacion: ubicacion
+                })
+                .catch(error => {
+                    console.error("Error al registrar movimiento:", error);
+                });
+            }).catch(error => {
+                console.error("Error al obtener ubicación:", error);
+                // Registrar movimiento sin ubicación si hay error
+                db.collection("movimientos").add({
+                    userId: userId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: estadoNuevo,
+                    fecha: new Date(),
+                    motivo: motivo,
+                    responsableId: responsableId,
+                    ubicacion: "Ubicación no disponible"
                 });
             });
         }
@@ -1258,11 +1185,12 @@
                                     <option value="">Cambiar estado</option>
                                     <option value="oficina">Oficina</option>
                                     <option value="muestreo">Muestreo</option>
-                                    <option value="salidaSR">Salida Intermitente</option>
+                                    <option value="salidaSR">Salida Sin Regreso</option>
                                     <option value="salidaCR">Salida con regreso</option>
                                     <option value="descanso">Descanso</option>
                                     <option value="vacaciones">Vacaciones</option>
                                     <option value="vacacionesTxt">Vacaciones TxT</option>
+                                    <option value="salida">Salida</option>
                                 </select>
                             </td>
                         `;
@@ -1932,4 +1860,3 @@
     </script>
 </body>
 </html>
-
