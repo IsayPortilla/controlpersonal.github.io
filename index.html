@@ -1295,7 +1295,7 @@
                         // Actualizar la interfaz con los datos del usuario
                         myUserName.textContent = usuario.nombre || 'N/A';
                         myUserEmail.textContent = usuario.email || 'N/A';
-                        myUserStatus.innerHTML = `<span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span>`;
+                        myUserStatus.innerHTML = `<span class="status-${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span>`;
                         myUserLastUpdate.textContent = fecha.toLocaleString();
                         myUserLocation.textContent = usuario.ubicacion || 'No registrada';
                     }
