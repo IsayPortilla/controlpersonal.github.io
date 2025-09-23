@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -332,5 +332,2844 @@
         ReactDOM.render(<MaintenancePage />, document.getElementById('root'));
     </script>
 </body>
+</html>-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Control de Personal</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --color-oficina: #4CAF50;
+            --color-muestreo: #FF9800;
+            --color-salidaSR: #F44336;
+            --color-salidaCR: #5C6BC0;
+            --color-descanso: #9C27B0;
+            --color-vacaciones: #009688;
+            --color-vacacionesTxt: #795548;
+            --color-salida: #607D8B;
+            --color-primary: #2c3e50;
+            --color-secondary: #3498db;
+            --color-light: #ecf0f1;
+            --color-admin: #E91E63;
+            --color-user: #2196F3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            padding: 0 20px;
+        }
+
+        .auth-section {
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .auth-section span {
+            margin-right: 10px;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .role-admin {
+            background-color: var(--color-admin);
+            color: white;
+        }
+
+        .role-user {
+            background-color: var(--color-user);
+            color: white;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+
+        .btn-secondary {
+            background-color: var(--color-secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .filters {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filters select,
+        .filters input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .report-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .btn-pdf {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .btn-excel {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .user-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .status-oficina {
+            background-color: var(--color-oficina);
+        }
+
+        .status-muestreo {
+            background-color: var(--color-muestreo);
+        }
+
+        .status-salidaSR {
+            background-color: var(--color-salidaSR);
+        }
+
+        .status-salidaCR {
+            background-color: var(--color-salidaCR);
+        }
+        
+        .status-descanso {
+            background-color: var(--color-descanso);
+        }
+        
+        .status-vacaciones {
+            background-color: var(--color-vacaciones);
+        }
+        
+        .status-vacacionesTxt {
+            background-color: var(--color-vacacionesTxt);
+        }
+        
+        .status-salida {
+            background-color: var(--color-salida);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #777;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .switch-form a {
+            color: var(--color-secondary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        .add-user-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .add-user-section h2 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            color: #2ecc71;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            transition: background-color 0.3s;
+        }
+
+        .tab:last-child {
+            border-right: none;
+        }
+
+        .tab.active {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .user-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .user-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-card.selected {
+            border: 2px solid var(--color-primary);
+        }
+
+        .user-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--color-primary);
+        }
+
+        .user-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .user-card .status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .status-options {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status-options.active {
+            display: block;
+        }
+
+        .status-options h3 {
+            margin-top: 0;
+            color: var(--color-primary);
+        }
+
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .status-btn:hover {
+            opacity: 0.9;
+        }
+
+        .status-btn.oficina {
+            background-color: var(--color-oficina);
+        }
+
+        .status-btn.muestreo {
+            background-color: var(--color-muestreo);
+        }
+
+        .status-btn.salidaSR {
+            background-color: var(--color-salidaSR);
+        }
+
+        .status-btn.salidaCR {
+            background-color: var(--color-salidaCR);
+        }
+        
+        .status-btn.descanso {
+            background-color: var(--color-descanso);
+        }
+        
+        .status-btn.vacaciones {
+            background-color: var(--color-vacaciones);
+        }
+        
+        .status-btn.vacacionesTxt {
+            background-color: var(--color-vacacionesTxt);
+        }
+        
+        .status-btn.salida {
+            background-color: var(--color-salida);
+        }
+
+        .user-view {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .user-view h2 {
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .user-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+        }
+
+        .info-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .info-group span {
+            display: block;
+            padding: 8px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        .user-status-options {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .user-status-options h3 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        /* Nuevos estilos para la herramienta de unificación */
+        .unification-tool {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .unification-tool h2 {
+            color: var(--color-primary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .unification-list {
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .unification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .unification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .user-info-unification {
+            flex: 1;
+        }
+        
+        .user-info-unification .email {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .user-info-unification .name {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .user-info-unification .uid {
+            color: #999;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        .unification-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .no-unification {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Nuevos estilos para la pestaña de edición */
+        .edit-user-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .edit-user-section h2 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+        
+        .user-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .user-selector select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .edit-form {
+            display: none;
+        }
+        
+        .edit-form.active {
+            display: block;
+        }
+        
+        .form-actions-edit {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+        .user-details {
+            background-color: #fafafa;
+        }
+
+        .movement-details {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .movement-details th {
+            background-color: #eee;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .movement-details td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .movement-details tr:last-child td {
+            border-bottom: none;
+        }
+
+        .location-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Nuevos estilos para mostrar el estado actual con color */
+        .current-status-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .current-status-label {
+            font-weight: bold;
+        }
+
+        /* Estilos para el selector de estado con colores */
+        .status-option {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+        }
+
+        .status-color-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .status-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .status-select option {
+            padding: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .report-buttons {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .auth-section {
+                flex-direction: column;
+                gap: 5px;
+                align-items: flex-end;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .tab:last-child {
+                border-bottom: none;
+            }
+
+            .user-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .status-buttons {
+                flex-direction: column;
+            }
+
+            .user-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .unification-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .unification-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-actions-edit {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-delete {
+                order: 2;
+            }
+            
+            .current-status-display {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Iniciar Sesión</h2>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div id="confirmPasswordGroup" class="form-group" style="display: none;">
+                    <label for="confirmPassword">Confirmar Contraseña</label>
+                    <input type="password" id="confirmPassword">
+                </div>
+                <div id="roleGroup" class="form-group" style="display: none;">
+                    <label for="userRole">Rol de usuario</label>
+                    <select id="userRole">
+                        <option value="usuario">Usuario</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div id="authError" class="error-message"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="btnCancel" class="btn btn-danger">Cancelar</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary">Iniciar Sesión</button>
+                </div>
+            </form>
+            <div class="switch-form">
+                <p id="switchText">¿No tienes cuenta? <a id="switchLink">Regístrate aquí</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplicación principal (inicialmente oculta) -->
+    <div id="app" style="display: none;">
+        <header>
+            <h1>Sistema de Control de Personal</h1>
+            <div class="auth-section">
+                <span id="userEmail"></span>
+                <span id="userRoleBadge" class="user-role"></span>
+                <button id="btnLogout" class="btn btn-danger">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Vista para usuarios normales -->
+            <div id="user-view" style="display: none;">
+                <div class="user-view">
+                    <h2>Mi Información</h2>
+                    <div class="user-info">
+                        <div class="info-group">
+                            <label>Nombre:</label>
+                            <span id="myUserName"></span>
+                        </div>
+                        <div class="info-group">
+                            <label>Email:</label>
+                            <span id="myUserEmail"></span>
+                        </div>
+                        <div class="info-group">
+                            <label>Estado actual:</label>
+                            <span id="myUserStatus"></span>
+                        </div>
+                        <div class="info-group">
+                            <label>Última actualización:</label>
+                            <span id="myUserLastUpdate"></span>
+                        </div>
+                        <div class="info-group">
+                            <label>Ubicación:</label>
+                            <span id="myUserLocation"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="user-status-options">
+                        <h3>Cambiar mi estado</h3>
+                        <div class="status-buttons">
+                            <button class="status-btn oficina" data-status="oficina">Oficina</button>
+                            <button class="status-btn muestreo" data-status="muestreo">Muestreo</button>
+                            <button class="status-btn salidaSR" data-status="salidaSR">Salida Sin Regreso</button>
+                            <button class="status-btn salidaCR" data-status="salidaCR">Salida Con Regreso</button>
+                            <button class="status-btn descanso" data-status="descanso">Descanso</button>
+                            <button class="status-btn vacaciones" data-status="vacaciones">Vacaciones</button>
+                            <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Vacaciones TxT</button>
+                            <button class="status-btn salida" data-status="salida">Salida</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista para administradores -->
+            <div id="admin-view" style="display: none;">
+                <div class="tabs">
+                    <div class="tab active" data-tab="control">Control de Personal</div>
+                    <div class="tab" data-tab="add-user">Agregar Usuario</div>
+                    <div class="tab" data-tab="edit-user">Editar Usuario</div>
+                    <div class="tab" data-tab="movements">Movimientos de Personal</div>
+                    <div class="tab" data-tab="cards">Vista de Recuadros</div>
+                    <div class="tab" data-tab="unification">Unificar Usuarios</div>
+                </div>
+
+                <!-- Pestaña de Control de Personal -->
+                <div class="tab-content active" id="control-tab">
+                    <div class="filters">
+                        <div>
+                            <label for="periodo">Periodo:</label>
+                            <select id="periodo">
+                                <option value="diario">Diario</option>
+                                <option value="semanal">Semanal</option>
+                                <option value="mensual">Mensual</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="fecha">Fecha:</label>
+                            <input type="date" id="fecha">
+                        </div>
+
+                        <div class="report-buttons">
+                            <button class="btn btn-pdf" id="btn-pdf">Generar PDF</button>
+                            <button class="btn btn-excel" id="btn-excel">Generar Excel</button>
+                        </div>
+                    </div>
+
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Última actualización</th>
+                                <th>Ubicación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <tr>
+                                <td colspan="7" class="loading">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pestaña de Agregar Usuario -->
+                <div class="tab-content" id="add-user-tab">
+                    <div class="add-user-section">
+                        <h2>Agregar Nuevo Usuario</h2>
+                        <form id="addUserForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newUserName">Nombre</label>
+                                    <input type="text" id="newUserName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserEmail">Email</label>
+                                    <input type="email" id="newUserEmail" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newUserStatus">Estado inicial</label>
+                                    <select id="newUserStatus" required class="status-select">
+                                        <option value="oficina">Oficina</option>
+                                        <option value="muestreo">Muestreo</option>
+                                        <option value="salidaSR">Salida sin regreso</option>
+                                        <option value="salidaCR">Salida con regreso</option>
+                                        <option value="descanso">Descanso</option>
+                                        <option value="vacaciones">Vacaciones</option>
+                                        <option value="vacacionesTxt">Vacaciones TxT</option>
+                                        <option value="salida">Salida</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserRole">Rol de usuario</label>
+                                    <select id="newUserRole" required>
+                                        <option value="usuario">Usuario</option>
+                                        <option value="administrador">Administrador</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+                            <div id="addUserMessage"></div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Nueva Pestaña de Editar Usuario -->
+                <div class="tab-content" id="edit-user-tab">
+                    <div class="edit-user-section">
+                        <h2>Editar Usuario</h2>
+                        
+                        <div class="user-selector">
+                            <label for="userToEdit">Seleccionar usuario:</label>
+                            <select id="userToEdit">
+                                <option value="">-- Seleccione un usuario --</option>
+                            </select>
+                        </div>
+                        
+                        <form id="editUserForm" class="edit-form">
+                            <input type="hidden" id="editUserId">
+                            
+                            <div class="current-status-display">
+                                <span class="current-status-label">Estado actual:</span>
+                                <span id="currentUserStatus" class="status"></span>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editUserName">Nombre</label>
+                                    <input type="text" id="editUserName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserEmail">Email</label>
+                                    <input type="email" id="editUserEmail" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editUserStatus">Estado</label>
+                                    <select id="editUserStatus" required class="status-select">
+                                        <option value="oficina">Oficina</option>
+                                        <option value="muestreo">Muestreo</option>
+                                        <option value="salidaSR">Salida sin regreso</option>
+                                        <option value="salidaCR">Salida con regreso</option>
+                                        <option value="descanso">Descanso</option>
+                                        <option value="vacaciones">Vacaciones</option>
+                                        <option value="vacacionesTxt">Vacaciones TxT</option>
+                                        <option value="salida">Salida</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserRole">Rol de usuario</label>
+                                    <select id="editUserRole" required>
+                                        <option value="usuario">Usuario</option>
+                                        <option value="administrador">Administrador</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editUserLocation">Ubicación</label>
+                                <input type="text" id="editUserLocation">
+                            </div>
+                            
+                            <div class="form-actions-edit">
+                                <button type="button" id="btnDeleteUser" class="btn btn-delete">Eliminar Usuario</button>
+                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                            </div>
+                            
+                            <div id="editUserMessage"></div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Pestaña de Movimientos de Personal -->
+                <div class="tab-content" id="movements-tab">
+                    <div class="filters">
+                        <div>
+                            <label for="movementStartDate">Desde:</label>
+                            <input type="date" id="movementStartDate">
+                        </div>
+                        <div>
+                            <label for="movementEndDate">Hasta:</label>
+                            <input type="date" id="movementEndDate">
+                        </div>
+                        <button class="btn btn-primary" id="btnFilterMovements">Filtrar</button>
+                        <div class="report-buttons">
+                            <button class="btn btn-pdf" id="btn-pdf-movements">Generar PDF</button>
+                            <button class="btn btn-excel" id="btn-excel-movements">Generar Excel</button>
+                        </div>
+                    </div>
+
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Estado Anterior</th>
+                                <th>Estado Nuevo</th>
+                                <th>Fecha Cambio</th>
+                                <th>Ubicación</th>
+                                <th>Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movements-table-body">
+                            <tr>
+                                <td colspan="6" class="loading">Seleccione filtros para ver los movimientos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pestaña de Vista de Recuadros -->
+                <div class="tab-content" id="cards-tab">
+                    <div class="filters">
+                        <div>
+                            <label for="cardsFilter">Filtrar por estado:</label>
+                            <select id="cardsFilter">
+                                <option value="todos">Todos</option>
+                                <option value="oficina">Oficina</option>
+                                <option value="muestreo">Muestreo</option>
+                                <option value="salidaSR">Salida Sin Regreso</option>
+                                <option value="salidaCR">Salida con regreso</option>
+                                <option value="descanso">Descanso</option>
+                                <option value="vacaciones">Vacaciones</option>
+                                <option value="vacacionesTxt">Vacaciones TxT</option>
+                                <option value="salida">Salida</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btnFilterCards">Filtrar</button>
+                    </div>
+
+                    <div class="status-options" id="statusOptions">
+                        <h3>Cambiar estado de <span id="selectedUserName"></span></h3>
+                        <div class="status-buttons">
+                            <button class="status-btn oficina" data-status="oficina">Oficina</button>
+                            <button class="status-btn muestreo" data-status="muestreo">Muestreo</button>
+                            <button class="status-btn salidaSR" data-status="salidaSR">Salida Sin Regreso</button>
+                            <button class="status-btn salidaCR" data-status="salidaCR">Salida Con Regreso</button>
+                            <button class="status-btn descanso" data-status="descanso">Descanso</button>
+                            <button class="status-btn vacaciones" data-status="vacaciones">Vacaciones</button>
+                            <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Vacaciones TxT</button>
+                            <button class="status-btn salida" data-status="salida">Salida</button>
+                        </div>
+                    </div>
+
+                    <div class="user-cards" id="user-cards">
+                        <div class="loading">Cargando usuarios...</div>
+                    </div>
+                </div>
+
+                <!-- Pestaña de Unificación de Usuarios -->
+                <div class="tab-content" id="unification-tab">
+                    <div class="unification-tool">
+                        <h2>Herramienta de Unificación de Usuarios</h2>
+                        <p>Esta herramienta permite vincular usuarios de Authentication con registros en la base de datos cuando no coinciden automáticamente.</p>
+                        
+                        <div class="filters">
+                            <button class="btn btn-primary" id="btnFindUnlinkedUsers">Buscar usuarios sin vincular</button>
+                            <button class="btn btn-secondary" id="btnRefreshUsers">Actualizar lista</button>
+                        </div>
+                        
+                        <div class="unification-list" id="unificationList">
+                            <div class="no-unification">Haga clic en "Buscar usuarios sin vincular" para comenzar</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD2AKLkOppM52EXtd0asaejb0cuBAi679M",
+            authDomain: "controlmuestreo.firebaseapp.com",
+            projectId: "controlmuestreo",
+            storageBucket: "controlmuestreo.firebasestorage.app",
+            messagingSenderId: "1016282431379",
+            appId: "1:1016282431379:web:8c256ced964eba0913f266",
+            measurementId: "G-12PSN98LQH"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Referencias a elementos del DOM
+        const loginModal = document.getElementById('loginModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const authForm = document.getElementById('authForm');
+        const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+        const roleGroup = document.getElementById('roleGroup');
+        const authError = document.getElementById('authError');
+        const btnCancel = document.getElementById('btnCancel');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const switchText = document.getElementById('switchText');
+        const switchLink = document.getElementById('switchLink');
+        const app = document.getElementById('app');
+        const userEmail = document.getElementById('userEmail');
+        const userRoleBadge = document.getElementById('userRoleBadge');
+        const btnLogout = document.getElementById('btnLogout');
+        const addUserForm = document.getElementById('addUserForm');
+        const addUserMessage = document.getElementById('addUserMessage');
+        const periodoSelect = document.getElementById('periodo');
+        const fechaInput = document.getElementById('fecha');
+        const btnPdf = document.getElementById('btn-pdf');
+        const btnExcel = document.getElementById('btn-excel');
+        const tableBody = document.getElementById('user-table-body');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const movementStartDate = document.getElementById('movementStartDate');
+        const movementEndDate = document.getElementById('movementEndDate');
+        const btnFilterMovements = document.getElementById('btnFilterMovements');
+        const movementsTableBody = document.getElementById('movements-table-body');
+        const btnPdfMovements = document.getElementById('btn-pdf-movements');
+        const btnExcelMovements = document.getElementById('btn-excel-movements');
+        const cardsFilter = document.getElementById('cardsFilter');
+        const btnFilterCards = document.getElementById('btnFilterCards');
+        const statusOptions = document.getElementById('statusOptions');
+        const selectedUserName = document.getElementById('selectedUserName');
+        const userCards = document.getElementById('user-cards');
+        const statusButtons = document.querySelectorAll('.status-btn');
+        const userView = document.getElementById('user-view');
+        const adminView = document.getElementById('admin-view');
+        const myUserName = document.getElementById('myUserName');
+        const myUserEmail = document.getElementById('myUserEmail');
+        const myUserStatus = document.getElementById('myUserStatus');
+        const myUserLastUpdate = document.getElementById('myUserLastUpdate');
+        const myUserLocation = document.getElementById('myUserLocation');
+        const userStatusButtons = document.querySelectorAll('#user-view .status-btn');
+        const btnFindUnlinkedUsers = document.getElementById('btnFindUnlinkedUsers');
+        const btnRefreshUsers = document.getElementById('btnRefreshUsers');
+        const unificationList = document.getElementById('unificationList');
+
+        // Nuevas referencias para la pestaña de edición
+        const userToEditSelect = document.getElementById('userToEdit');
+        const editUserForm = document.getElementById('editUserForm');
+        const editUserId = document.getElementById('editUserId');
+        const editUserName = document.getElementById('editUserName');
+        const editUserEmail = document.getElementById('editUserEmail');
+        const editUserStatus = document.getElementById('editUserStatus');
+        const editUserRole = document.getElementById('editUserRole');
+        const editUserLocation = document.getElementById('editUserLocation');
+        const editUserMessage = document.getElementById('editUserMessage');
+        const btnDeleteUser = document.getElementById('btnDeleteUser');
+        const currentUserStatus = document.getElementById('currentUserStatus');
+
+        // Variables de estado
+        let isLoginMode = true;
+        let currentUser = null;
+        let currentUserRole = null;
+        let selectedUserId = null;
+        let allUsers = [];
+        let allMovements = [];
+        let authUsers = [];
+        let firestoreUsers = [];
+
+        // Establecer fecha actual por defecto
+        const today = new Date();
+        fechaInput.valueAsDate = today;
+        movementStartDate.valueAsDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        movementEndDate.valueAsDate = today;
+
+        // Estado de usuarios
+        const estados = {
+            oficina: { texto: 'Oficina', clase: 'status-oficina', color: '#4CAF50' },
+            muestreo: { texto: 'Muestreo', clase: 'status-muestreo', color: '#FF9800' },
+            salidaSR: { texto: 'Salida S/R', clase: 'status-salidaSR', color: '#F44336' },
+            salidaCR: { texto: 'Salida C/R', clase: 'status-salidaCR', color: '#5C6BC0' },
+            descanso: { texto: 'Descanso', clase: 'status-descanso', color: '#9C27B0' },
+            vacaciones: { texto: 'Vacaciones', clase: 'status-vacaciones', color: '#009688' },
+            vacacionesTxt: { texto: 'Vacaciones TxT', clase: 'status-vacacionesTxt', color: '#795548' },
+            salida: { texto: 'Salida', clase: 'status-salida', color: '#607D8B' }
+        };
+
+        // Roles de usuario
+        const roles = {
+            administrador: { texto: 'Administrador', clase: 'role-admin' },
+            usuario: { texto: 'Usuario', clase: 'role-user' }
+        };
+
+        // Inicializar la aplicación
+        function init() {
+            // Mostrar el modal de login al cargar
+            loginModal.style.display = 'flex';
+
+            // Configurar event listeners
+            setupEventListeners();
+
+            // Verificar si hay una sesión activa
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Usuario autenticado
+                    currentUser = user;
+                    userEmail.textContent = user.email;
+                    loginModal.style.display = 'none';
+                    app.style.display = 'block';
+
+                    // Obtener información del usuario desde Firestore
+                    obtenerInformacionUsuario(user.uid);
+                } else {
+                    // No hay usuario autenticado
+                    app.style.display = 'none';
+                    loginModal.style.display = 'flex';
+                }
+            });
+        }
+
+        // Obtener información del usuario desde Firestore
+        function obtenerInformacionUsuario(userId) {
+            db.collection("usuarios").doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        currentUserRole = userData.rol || 'usuario';
+                        
+                        // Actualizar UI con el rol
+                        userRoleBadge.textContent = roles[currentUserRole].texto;
+                        userRoleBadge.className = `user-role ${roles[currentUserRole].clase}`;
+                        
+                        // Mostrar la vista correspondiente según el rol
+                        if (currentUserRole === 'administrador') {
+                            userView.style.display = 'none';
+                            adminView.style.display = 'block';
+                            cargarUsuarios();
+                            cargarUsuariosParaEdicion();
+                            aplicarColoresAEstado();
+                        } else {
+                            userView.style.display = 'block';
+                            adminView.style.display = 'none';
+                            cargarInformacionUsuario(userId);
+                        }
+                    } else {
+                        // Si el usuario no existe en Firestore, crear registro por defecto
+                        registrarUsuarioEnSistema(currentUser);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener información del usuario:", error);
+                });
+        }
+
+        // Cargar información del usuario para la vista de usuario normal
+        function cargarInformacionUsuario(userId) {
+            db.collection("usuarios").doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const usuario = doc.data();
+                        const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
+                        
+                        // Actualizar la interfaz con los datos del usuario
+                        myUserName.textContent = usuario.nombre || 'N/A';
+                        myUserEmail.textContent = usuario.email || 'N/A';
+                        myUserStatus.innerHTML = `<span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span>`;
+                        myUserLastUpdate.textContent = fecha.toLocaleString();
+                        myUserLocation.textContent = usuario.ubicacion || 'No registrada';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar información del usuario:", error);
+                });
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Auth form
+            authForm.addEventListener('submit', handleAuth);
+            btnCancel.addEventListener('click', () => {
+                loginModal.style.display = 'none';
+            });
+            switchLink.addEventListener('click', toggleAuthMode);
+
+            // App
+            btnLogout.addEventListener('click', handleLogout);
+            
+            // Para administradores
+            if (addUserForm) {
+                addUserForm.addEventListener('submit', agregarUsuario);
+            }
+            if (btnPdf) {
+                btnPdf.addEventListener('click', () => generarPDF('personal'));
+            }
+            if (btnExcel) {
+                btnExcel.addEventListener('click', () => generarExcel('personal'));
+            }
+
+            // Tabs (solo para administradores)
+            if (tabs.length > 0) {
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabId = tab.getAttribute('data-tab');
+
+                        // Desactivar todas las pestañas
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tabContents.forEach(tc => tc.classList.remove('active'));
+
+                        // Activar la pestaña seleccionada
+                        tab.classList.add('active');
+                        document.getElementById(`${tabId}-tab`).classList.add('active');
+
+                        // Si es la pestaña de movimientos, cargar los datos
+                        if (tabId === 'movements') {
+                            cargarMovimientos();
+                        }
+
+                        // Si es la pestaña de recuadros, cargar los datos
+                        if (tabId === 'cards') {
+                            cargarUsuariosParaRecuadros();
+                        }
+                        
+                        // Si es la pestaña de edición, cargar los usuarios
+                        if (tabId === 'edit-user') {
+                            cargarUsuariosParaEdicion();
+                        }
+                    });
+                });
+            }
+
+            // Movimientos (solo para administradores)
+            if (btnFilterMovements) {
+                btnFilterMovements.addEventListener('click', cargarMovimientos);
+            }
+            if (btnPdfMovements) {
+                btnPdfMovements.addEventListener('click', () => generarPDF('movimientos'));
+            }
+            if (btnExcelMovements) {
+                btnExcelMovements.addEventListener('click', () => generarExcel('movimientos'));
+            }
+
+            // Recuadros (solo para administradores)
+            if (btnFilterCards) {
+                btnFilterCards.addEventListener('click', cargarUsuariosParaRecuadros);
+            }
+
+            // Botones de cambio de estado (para administradores)
+            statusButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const nuevoEstado = this.getAttribute('data-status');
+                    cambiarEstadoUsuario(selectedUserId, nuevoEstado);
+                });
+            });
+
+            // Botones de cambio de estado (para usuarios normales)
+            userStatusButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const nuevoEstado = this.getAttribute('data-status');
+                    cambiarEstadoUsuario(currentUser.uid, nuevoEstado);
+                });
+            });
+
+            // Nueva pestaña de unificación
+            if (btnFindUnlinkedUsers) {
+                btnFindUnlinkedUsers.addEventListener('click', findUnlinkedUsers);
+            }
+            
+            if (btnRefreshUsers) {
+                btnRefreshUsers.addEventListener('click', refreshUnificationList);
+            }
+            
+            // Nueva pestaña de edición
+            if (userToEditSelect) {
+                userToEditSelect.addEventListener('change', cargarDatosUsuario);
+            }
+            
+            if (editUserForm) {
+                editUserForm.addEventListener('submit', guardarCambiosUsuario);
+            }
+            
+            if (btnDeleteUser) {
+                btnDeleteUser.addEventListener('click', eliminarUsuario);
+            }
+            
+            // Aplicar colores al selector de estado cuando cambie
+            if (editUserStatus) {
+                editUserStatus.addEventListener('change', actualizarColorEstado);
+            }
+        }
+
+        // Aplicar colores a los selectores de estado
+        function aplicarColoresAEstado() {
+            // Aplicar a todos los selectores de estado en la página
+            const statusSelects = document.querySelectorAll('.status-select');
+            
+            statusSelects.forEach(select => {
+                // Crear opciones con colores
+                const options = select.querySelectorAll('option');
+                
+                options.forEach(option => {
+                    const estado = option.value;
+                    if (estados[estado]) {
+                        option.style.backgroundColor = estados[estado].color;
+                        option.style.color = 'white';
+                        option.style.padding = '5px';
+                    }
+                });
+                
+                // Aplicar color al selector actual
+                actualizarColorSelector(select);
+                
+                // Actualizar color cuando cambie la selección
+                select.addEventListener('change', function() {
+                    actualizarColorSelector(this);
+                });
+            });
+        }
+        
+        // Actualizar el color del selector de estado
+        function actualizarColorSelector(selectElement) {
+            const selectedValue = selectElement.value;
+            if (estados[selectedValue]) {
+                selectElement.style.backgroundColor = estados[selectedValue].color;
+                selectElement.style.color = 'white';
+                selectElement.style.borderColor = estados[selectedValue].color;
+            } else {
+                selectElement.style.backgroundColor = '';
+                selectElement.style.color = '';
+                selectElement.style.borderColor = '#ddd';
+            }
+        }
+        
+        // Actualizar el color del estado actual mostrado
+        function actualizarColorEstado() {
+            const estadoSeleccionado = editUserStatus.value;
+            if (estados[estadoSeleccionado]) {
+                currentUserStatus.textContent = estados[estadoSeleccionado].texto;
+                currentUserStatus.className = `status ${estados[estadoSeleccionado].clase}`;
+            }
+        }
+
+        // Alternar entre login y registro
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+
+            if (isLoginMode) {
+                modalTitle.textContent = 'Iniciar Sesión';
+                btnSubmit.textContent = 'Iniciar Sesión';
+                switchText.innerHTML = '¿No tienes cuenta? <a id="switchLink">Regístrate aquí</a>';
+                confirmPasswordGroup.style.display = 'none';
+                roleGroup.style.display = 'none';
+            } else {
+                modalTitle.textContent = 'Crear Cuenta';
+                btnSubmit.textContent = 'Registrarse';
+                switchText.innerHTML = '¿Ya tienes cuenta? <a id="switchLink">Inicia sesión aquí</a>';
+                confirmPasswordGroup.style.display = 'block';
+                roleGroup.style.display = 'block';
+            }
+
+            // Reasignar el event listener después de cambiar el HTML
+            document.getElementById('switchLink').addEventListener('click', toggleAuthMode);
+
+            // Limpiar mensajes de error
+            authError.textContent = '';
+        }
+
+        // Registrar información del usuario en el sistema
+        function registrarUsuarioEnSistema(user, userRole = 'usuario') {
+            // Verificar si el usuario ya existe en la colección de usuarios
+            db.collection("usuarios").doc(user.uid).get()
+                .then(doc => {
+                    if (!doc.exists) {
+                        // El usuario no existe, crearlo con estado por defecto
+                        const userData = {
+                            nombre: user.displayName || "Usuario",
+                            email: user.email,
+                            estado: "oficina",
+                            rol: userRole,
+                            ultimaActualizacion: new Date(),
+                            userId: user.uid
+                        };
+
+                        db.collection("usuarios").doc(user.uid).set(userData)
+                            .then(() => {
+                                console.log("Usuario registrado en el sistema");
+
+                                // Registrar el cambio de estado en el historial
+                                registrarMovimiento(user.uid, null, "oficina", "Registro inicial", user.uid);
+
+                                // Actualizar la información del usuario actual
+                                obtenerInformacionUsuario(user.uid);
+                            })
+                            .catch(error => {
+                                console.error("Error al registrar usuario:", error);
+                            });
+                    } else {
+                        // El usuario existe, actualizar última conexión
+                        db.collection("usuarios").doc(user.uid).update({
+                            ultimaActualizacion: new Date()
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al verificar usuario:", error);
+                });
+        }
+
+        // Obtener ubicación por nombre (ciudad, región)
+        function obtenerUbicacion() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject("La geolocalización no es compatible con este navegador");
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        try {
+                            const { latitude, longitude } = position.coords;
+                            
+                            // Usar la API de Nominatim (OpenStreetMap) para obtener la ubicación por nombre
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
+                            const data = await response.json();
+                            
+                            if (data && data.address) {
+                                const address = data.address;
+                                let locationName = "";
+                                
+                                // Construir un nombre de ubicación legible
+                                if (address.city) {
+                                    locationName = address.city;
+                                } else if (address.town) {
+                                    locationName = address.town;
+                                } else if (address.village) {
+                                    locationName = address.village;
+                                } else if (address.municipality) {
+                                    locationName = address.municipality;
+                                }
+                                
+                                if (address.state) {
+                                    locationName += locationName ? `, ${address.state}` : address.state;
+                                }
+                                
+                                if (address.country) {
+                                    locationName += locationName ? `, ${address.country}` : address.country;
+                                }
+                                
+                                resolve(locationName || "Ubicación no disponible");
+                            } else {
+                                resolve("Ubicación no disponible");
+                            }
+                        } catch (error) {
+                            console.error("Error al obtener ubicación:", error);
+                            resolve("Ubicación no disponible");
+                        }
+                    },
+                    (error) => {
+                        console.error("Error de geolocalización:", error);
+                        resolve("Ubicación no disponible");
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+
+        // Manejar autenticación (login/registro)
+        function handleAuth(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const userRole = document.getElementById('userRole') ? document.getElementById('userRole').value : 'usuario';
+
+            // Validaciones
+            if (!isLoginMode && password !== confirmPassword) {
+                authError.textContent = 'Las contraseñas no coinciden';
+                return;
+            }
+
+            authError.textContent = '';
+
+            if (isLoginMode) {
+                // Iniciar sesión
+                auth.signInWithEmailAndPassword(email, password)
+                    .catch(error => {
+                        authError.textContent = error.message;
+                    });
+            } else {
+                // Crear cuenta
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Registrar usuario en el sistema con el rol seleccionado
+                        registrarUsuarioEnSistema(userCredential.user, userRole);
+                        
+                        // Cambiar a modo login después de registro exitoso
+                        isLoginMode = true;
+                        toggleAuthMode();
+                    })
+                    .catch(error => {
+                        authError.textContent = error.message;
+                    });
+            }
+        }
+
+        // Cerrar sesión
+        function handleLogout() {
+            auth.signOut();
+        }
+
+        // Agregar un nuevo usuario to Firestore (solo administradores)
+        function agregarUsuario(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const estado = document.getElementById('newUserStatus').value;
+            const rol = document.getElementById('newUserRole').value;
+
+            // Crear un ID único para el usuario
+            const userId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+            db.collection("usuarios").doc(userId).set({
+                nombre: nombre,
+                email: email,
+                estado: estado,
+                rol: rol,
+                ultimaActualizacion: new Date(),
+                userId: userId
+            })
+                .then(() => {
+                    addUserMessage.textContent = 'Usuario agregado correctamente';
+                    addUserMessage.classList.remove('error-message');
+                    addUserMessage.classList.add('success-message');
+                    addUserForm.reset();
+
+                    // Registrar el movimiento en el historial
+                    registrarMovimiento(userId, null, estado, "Creación de usuario", currentUser.uid);
+
+                    // Ocultar mensaje después de 3 segundos
+                    setTimeout(() => {
+                        addUserMessage.textContent = '';
+                    }, 3000);
+
+                    // Recargar la tabla
+                    cargarUsuarios();
+                    cargarUsuariosParaRecuadros();
+                    cargarUsuariosParaEdicion();
+                })
+                .catch(error => {
+                    addUserMessage.textContent = 'Error al agregar usuario: ' + error.message;
+                    addUserMessage.classList.remove('success-message');
+                    addUserMessage.classList.add('error-message');
+                });
+        }
+
+        // Registrar movimiento en el historial
+        function registrarMovimiento(userId, estadoAnterior, estadoNuevo, motivo, responsableId) {
+            obtenerUbicacion().then(ubicacion => {
+                db.collection("movimientos").add({
+                    userId: userId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: estadoNuevo,
+                    fecha: new Date(),
+                    motivo: motivo,
+                    responsableId: responsableId,
+                    ubicacion: ubicacion
+                })
+                .catch(error => {
+                    console.error("Error al registrar movimiento:", error);
+                });
+            }).catch(error => {
+                console.error("Error al obtener ubicación:", error);
+                // Registrar movimiento sin ubicación si hay error
+                db.collection("movimientos").add({
+                    userId: userId,
+                    estadoAnterior: estadoAnterior,
+                    estadoNuevo: estadoNuevo,
+                    fecha: new Date(),
+                    motivo: motivo,
+                    responsableId: responsableId,
+                    ubicacion: "Ubicación no disponible"
+                });
+            });
+        }
+
+        // Cargar datos de usuarios desde Firebase (solo administradores)
+        function cargarUsuarios() {
+            if (currentUserRole !== 'administrador') return;
+            
+            tableBody.innerHTML = '<tr><td colspan="7" class="loading">Cargando datos...</td></tr>';
+
+            db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre").get()
+                .then((querySnapshot) => {
+                    tableBody.innerHTML = '';
+                    allUsers = [];
+
+                    if (querySnapshot.empty) {
+                        tableBody.innerHTML = '<tr><td colspan="7">No hay usuarios registrados</td></tr>';
+                        return;
+                    }
+
+                    querySnapshot.forEach((doc) => {
+                        const usuario = doc.data();
+                        usuario.id = doc.id;
+                        allUsers.push(usuario);
+
+                        const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
+
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                            <td>${usuario.nombre || 'N/A'}</td>
+                            <td>${usuario.email || 'N/A'}</td>
+                            <td><span class="user-role ${roles[usuario.rol]?.clase || 'role-user'}">${roles[usuario.rol]?.texto || 'Usuario'}</span></td>
+                            <td><span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span></td>
+                            <td>${fecha.toLocaleString()}</td>
+                            <td>${usuario.ubicacion || 'No registrada'}</td>
+                            <td>
+                                <select class="change-status" data-userid="${doc.id}">
+                                    <option value="">Cambiar estado</option>
+                                    <option value="oficina">Oficina</option>
+                                    <option value="muestreo">Muestreo</option>
+                                    <option value="salidaSR">Salida Sin Regreso</option>
+                                    <option value="salidaCR">Salida con regreso</option>
+                                    <option value="descanso">Descanso</option>
+                                    <option value="vacaciones">Vacaciones</option>
+                                    <option value="vacacionesTxt">Vacaciones TxT</option>
+                                    <option value="salida">Salida</option>
+                                </select>
+                            </td>
+                        `;
+
+                        tableBody.appendChild(fila);
+                    });
+
+                    // Agregar event listeners para cambiar estado
+                    document.querySelectorAll('.change-status').forEach(select => {
+                        select.addEventListener('change', function () {
+                            const nuevoEstado = this.value;
+                            const userId = this.getAttribute('data-userid');
+
+                            if (nuevoEstado) {
+                                cambiarEstadoUsuario(userId, nuevoEstado);
+                                this.value = "";
+                            }
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al cargar usuarios: ", error);
+                    tableBody.innerHTML = '<tr><td colspan="7">Error al cargar los datos</td></tr>';
+                });
+        }
+
+        // Cargar usuarios para la vista de recuadros (solo administradores)
+        function cargarUsuariosParaRecuadros() {
+            if (currentUserRole !== 'administrador') return;
+            
+            userCards.innerHTML = '<div class="loading">Cargando usuarios...</div>';
+
+            const filtroEstado = cardsFilter.value;
+
+            db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre").get()
+                .then((querySnapshot) => {
+                    userCards.innerHTML = '';
+                    if (querySnapshot.empty) {
+                        userCards.innerHTML = '<div class="loading">No hay usuarios registrados</div>';
+                        return;
+                    }
+
+                    querySnapshot.forEach((doc) => {
+                        const usuario = doc.data();
+
+                        // Aplicar filtro por estado
+                        if (filtroEstado !== 'todos' && usuario.estado !== filtroEstado) {
+                            return;
+                        }
+
+                        const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
+
+                        const card = document.createElement('div');
+                        card.className = 'user-card';
+                        card.setAttribute('data-userid', doc.id);
+                        card.innerHTML = `
+                        <br>
+                        <h3>${usuario.nombre || 'N/A'}</h3>
+                            <p>${usuario.email || 'N/A'}</p>
+                            <p><span class="user-role ${roles[usuario.rol]?.clase || 'role-user'}">${roles[usuario.rol]?.texto || 'Usuario'}</span></p>
+                            <p><small>Actualizado: ${fecha.toLocaleString()}</small></p>
+                            ${usuario.ubicacion ? `<p class="location-info">📍 ${usuario.ubicacion}</p>` : ''}
+                            <span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span>
+                        `;
+
+                        card.addEventListener('click', function () {
+                            // Deseleccionar todas las tarjetas
+                            document.querySelectorAll('.user-card').forEach(c => {
+                                c.classList.remove('selected');
+                            });
+
+                            // Seleccionar esta tarjeta
+                            this.classList.add('selected');
+
+                            // Mostrar opciones de estado
+                            selectedUserId = this.getAttribute('data-userid');
+                            selectedUserName.textContent = usuario.nombre;
+                            statusOptions.classList.add('active');
+                        });
+
+                        userCards.appendChild(card);
+                    });
+
+                    // Ocultar opciones de estado si no hay tarjetas
+                    if (userCards.children.length === 0) {
+                        userCards.innerHTML = '<div class="loading">No hay usuarios con el estado seleccionado</div>';
+                        statusOptions.classList.remove('active');
+                    } else {
+                        statusOptions.classList.remove('active');
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al cargar usuarios para recuadros: ", error);
+                    userCards.innerHTML = '<div class="loading">Error al cargar los datos</div>';
+                });
+        }
+
+        // Cargar usuarios en el selector de edición
+        function cargarUsuariosParaEdicion() {
+            userToEditSelect.innerHTML = '<option value="">-- Seleccione un usuario --</option>';
+            
+            db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre").get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const usuario = doc.data();
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        option.textContent = `${usuario.nombre} (${usuario.email})`;
+                        userToEditSelect.appendChild(option);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al cargar usuarios para edición: ", error);
+                });
+        }
+
+        // Cargar datos del usuario seleccionado
+        function cargarDatosUsuario() {
+            const userId = userToEditSelect.value;
+            
+            if (!userId) {
+                editUserForm.classList.remove('active');
+                return;
+            }
+            
+            db.collection("usuarios").doc(userId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const usuario = doc.data();
+                        
+                        // Llenar el formulario con los datos del usuario
+                        editUserId.value = userId;
+                        editUserName.value = usuario.nombre || '';
+                        editUserEmail.value = usuario.email || '';
+                        editUserStatus.value = usuario.estado || 'oficina';
+                        editUserRole.value = usuario.rol || 'usuario';
+                        editUserLocation.value = usuario.ubicacion || '';
+                        
+                        // Mostrar el estado actual con color
+                        if (estados[usuario.estado]) {
+                            currentUserStatus.textContent = estados[usuario.estado].texto;
+                            currentUserStatus.className = `status ${estados[usuario.estado].clase}`;
+                        }
+                        
+                        // Aplicar color al selector de estado
+                        actualizarColorSelector(editUserStatus);
+                        
+                        // Mostrar el formulario
+                        editUserForm.classList.add('active');
+                        editUserMessage.textContent = '';
+                    } else {
+                        console.error("Usuario no encontrado");
+                        editUserForm.classList.remove('active');
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al cargar datos del usuario: ", error);
+                    editUserForm.classList.remove('active');
+                });
+        }
+
+        // Guardar cambios del usuario
+        function guardarCambiosUsuario(e) {
+            e.preventDefault();
+            
+            const userId = editUserId.value;
+            const nombre = editUserName.value;
+            const email = editUserEmail.value;
+            const estado = editUserStatus.value;
+            const rol = editUserRole.value;
+            const ubicacion = editUserLocation.value;
+            
+            // Actualizar usuario en Firestore
+            db.collection("usuarios").doc(userId).update({
+                nombre: nombre,
+                email: email,
+                estado: estado,
+                rol: rol,
+                ubicacion: ubicacion,
+                ultimaActualizacion: new Date()
+            })
+            .then(() => {
+                editUserMessage.textContent = 'Usuario actualizado correctamente';
+                editUserMessage.classList.remove('error-message');
+                editUserMessage.classList.add('success-message');
+                
+                // Registrar el movimiento en el historial
+                registrarMovimiento(userId, null, estado, "Edición de usuario", currentUser.uid);
+                
+                // Ocultar mensaje después de 3 segundos
+                setTimeout(() => {
+                    editUserMessage.textContent = '';
+                }, 3000);
+                
+                // Recargar las vistas
+                cargarUsuarios();
+                cargarUsuariosParaRecuadros();
+                cargarUsuariosParaEdicion();
+            })
+            .catch((error) => {
+                editUserMessage.textContent = 'Error al actualizar usuario: ' + error.message;
+                editUserMessage.classList.remove('success-message');
+                editUserMessage.classList.add('error-message');
+            });
+        }
+
+        // Eliminar usuario
+        function eliminarUsuario() {
+            const userId = editUserId.value;
+            const nombre = editUserName.value;
+            
+            if (!userId || !confirm(`¿Está seguro de que desea eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+            
+            // Eliminar usuario de Firestore
+            db.collection("usuarios").doc(userId).delete()
+            .then(() => {
+                editUserMessage.textContent = 'Usuario eliminado correctamente';
+                editUserMessage.classList.remove('error-message');
+                editUserMessage.classList.add('success-message');
+                
+                // Registrar el movimiento en el historial
+                registrarMovimiento(userId, null, null, "Usuario eliminado", currentUser.uid);
+                
+                // Limpiar formulario
+                editUserForm.reset();
+                editUserForm.classList.remove('active');
+                userToEditSelect.value = '';
+                
+                // Recargar el selector de usuarios
+                cargarUsuariosParaEdicion();
+                
+                // Recargar las vistas
+                cargarUsuarios();
+                cargarUsuariosParaRecuadros();
+                
+                // Ocultar mensaje después de 3 segundos
+                setTimeout(() => {
+                    editUserMessage.textContent = '';
+                }, 3000);
+            })
+            .catch((error) => {
+                editUserMessage.textContent = 'Error al eliminar usuario: ' + error.message;
+                editUserMessage.classList.remove('success-message');
+                editUserMessage.classList.add('error-message');
+            });
+        }
+
+        // Cambiar estado de un usuario
+        function cambiarEstadoUsuario(userId, nuevoEstado) {
+            // Obtener el estado actual
+            db.collection("usuarios").doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const usuario = doc.data();
+                        const estadoAnterior = usuario.estado;
+
+                        // Obtener ubicación antes de actualizar
+                        obtenerUbicacion().then(ubicacion => {
+                            // Actualizar estado y ubicación
+                            db.collection("usuarios").doc(userId).update({
+                                estado: nuevoEstado,
+                                ultimaActualizacion: new Date(),
+                                ubicacion: ubicacion
+                            })
+                            .then(() => {
+                                // Registrar el movimiento en el historial
+                                registrarMovimiento(userId, estadoAnterior, nuevoEstado, "Cambio manual", currentUser.uid);
+
+                                // Recargar las vistas según el rol del usuario actual
+                                if (currentUserRole === 'administrador') {
+                                    cargarUsuarios();
+                                    cargarUsuariosParaRecuadros();
+                                    cargarUsuariosParaEdicion();
+                                    statusOptions.classList.remove('active');
+                                } else {
+                                    // Si es usuario normal, recargar su información
+                                    cargarInformacionUsuario(userId);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error al cambiar estado:", error);
+                                alert("Error al cambiar estado: " + error.message);
+                            });
+                        }).catch(error => {
+                            console.error("Error al obtener ubicación:", error);
+                            // Actualizar sin ubicación si hay error
+                            db.collection("usuarios").doc(userId).update({
+                                estado: nuevoEstado,
+                                ultimaActualizacion: new Date()
+                            })
+                            .then(() => {
+                                // Registrar el movimiento en el historial
+                                registrarMovimiento(userId, estadoAnterior, nuevoEstado, "Cambio manual", currentUser.uid);
+
+                                // Recargar las vistas según el rol del usuario actual
+                                if (currentUserRole === 'administrador') {
+                                    cargarUsuarios();
+                                    cargarUsuariosParaRecuadros();
+                                    cargarUsuariosParaEdicion();
+                                    statusOptions.classList.remove('active');
+                                } else {
+                                    // Si es usuario normal, recargar su información
+                                    cargarInformacionUsuario(userId);
+                                }
+                            });
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener usuario:", error);
+                });
+        }
+
+        // Función para buscar usuarios sin vincular
+        async function findUnlinkedUsers() {
+            unificationList.innerHTML = '<div class="no-unification">Buscando usuarios sin vincular...</div>';
+            
+            try {
+                // Obtener todos los usuarios de Authentication
+                const authUsersList = await auth.listUsers();
+                authUsers = authUsersList.users;
+                
+                // Obtener todos los usuarios de Firestore
+                const firestoreSnapshot = await db.collection("usuarios").get();
+                firestoreUsers = [];
+                firestoreSnapshot.forEach(doc => {
+                    firestoreUsers.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Encontrar usuarios sin vincular
+                const unlinkedUsers = [];
+                
+                // Buscar usuarios de Auth que no tienen correspondencia en Firestore
+                authUsers.forEach(authUser => {
+                    const linked = firestoreUsers.find(firestoreUser => firestoreUser.userId === authUser.uid);
+                    if (!linked) {
+                        unlinkedUsers.push({
+                            type: 'auth',
+                            user: authUser,
+                            reason: 'No existe en Firestore'
+                        });
+                    }
+                });
+                
+                // Buscar usuarios de Firestore que no tienen correspondencia en Auth
+                firestoreUsers.forEach(firestoreUser => {
+                    if (!firestoreUser.userId) {
+                        const linked = authUsers.find(authUser => authUser.email === firestoreUser.email);
+                        if (linked) {
+                            unlinkedUsers.push({
+                                type: 'firestore',
+                                user: firestoreUser,
+                                authMatch: linked,
+                                reason: 'Falta userId en Firestore'
+                            });
+                        } else {
+                            unlinkedUsers.push({
+                                type: 'firestore',
+                                user: firestoreUser,
+                                reason: 'No existe en Authentication'
+                            });
+                        }
+                    }
+                });
+                
+                // Mostrar resultados
+                displayUnlinkedUsers(unlinkedUsers);
+                
+            } catch (error) {
+                console.error("Error al buscar usuarios sin vincular:", error);
+                unificationList.innerHTML = '<div class="no-unification">Error al buscar usuarios: ' + error.message + '</div>';
+            }
+        }
+
+        // Mostrar usuarios sin vincular en la interfaz
+        function displayUnlinkedUsers(users) {
+            if (users.length === 0) {
+                unificationList.innerHTML = '<div class="no-unification">No se encontraron usuarios sin vincular</div>';
+                return;
+            }
+            
+            unificationList.innerHTML = '';
+            
+            users.forEach(userData => {
+                const item = document.createElement('div');
+                item.className = 'unification-item';
+                
+                if (userData.type === 'auth') {
+                    // Usuario de Authentication sin registro en Firestore
+                    item.innerHTML = `
+                        <div class="user-info-unification">
+                            <div class="email">${userData.user.email}</div>
+                            <div class="name">Usuario de Authentication</div>
+                            <div class="uid">UID: ${userData.user.uid}</div>
+                            <div class="reason">${userData.reason}</div>
+                        </div>
+                        <div class="unification-actions">
+                            <button class="btn btn-primary" onclick="createFirestoreUser('${userData.user.uid}', '${userData.user.email}')">Crear en Firestore</button>
+                        </div>
+                    `;
+                } else {
+                    // Usuario de Firestore sin vinculación con Auth
+                    if (userData.authMatch) {
+                        // Tiene coincidencia en Auth pero falta el userId
+                        item.innerHTML = `
+                            <div class="user-info-unification">
+                                <div class="email">${userData.user.email}</div>
+                                <div class="name">${userData.user.nombre || 'Sin nombre'}</div>
+                                <div class="uid">ID: ${userData.user.id}</div>
+                                <div class="reason">${userData.reason}</div>
+                            </div>
+                            <div class="unification-actions">
+                                <button class="btn btn-primary" onclick="linkUserToAuth('${userData.user.id}', '${userData.authMatch.uid}')">Vincular con Auth</button>
+                            </div>
+                        `;
+                    } else {
+                        // No tiene coincidencia en Auth
+                        item.innerHTML = `
+                            <div class="user-info-unification">
+                                <div class="email">${userData.user.email}</div>
+                                <div class="name">${userData.user.nombre || 'Sin nombre'}</div>
+                                <div class="uid">ID: ${userData.user.id}</div>
+                                <div class="reason">${userData.reason}</div>
+                            </div>
+                            <div class="unification-actions">
+                                <button class="btn btn-secondary" onclick="deleteFirestoreUser('${userData.user.id}')">Eliminar de Firestore</button>
+                            </div>
+                        `;
+                    }
+                }
+                
+                unificationList.appendChild(item);
+            });
+        }
+
+        // Función para crear un usuario en Firestore desde Authentication
+        async function createFirestoreUser(uid, email) {
+            try {
+                const nombre = prompt("Ingrese el nombre para este usuario:", email.split('@')[0]);
+                if (!nombre) return;
+                
+                const rol = confirm("¿Es este usuario un administrador?") ? "administrador" : "usuario";
+                
+                await db.collection("usuarios").doc(uid).set({
+                    nombre: nombre,
+                    email: email,
+                    estado: "oficina",
+                    rol: rol,
+                    userId: uid,
+                    ultimaActualizacion: new Date(),
+                    ubicacion: "No registrada"
+                });
+                
+                alert("Usuario creado exitosamente en Firestore");
+                refreshUnificationList();
+            } catch (error) {
+                console.error("Error al crear usuario en Firestore:", error);
+                alert("Error al crear usuario: " + error.message);
+            }
+        }
+
+        // Función para vincular un usuario de Firestore con Authentication
+        async function linkUserToAuth(firestoreId, authUid) {
+            try {
+                await db.collection("usuarios").doc(firestoreId).update({
+                    userId: authUid
+                });
+                
+                alert("Usuario vinculado exitosamente");
+                refreshUnificationList();
+            } catch (error) {
+                console.error("Error al vincular usuario:", error);
+                alert("Error al vincular usuario: " + error.message);
+            }
+        }
+
+        // Función para eliminar un usuario de Firestore
+        async function deleteFirestoreUser(userId) {
+            try {
+                if (confirm("¿Está seguro de que desea eliminar este usuario de Firestore?")) {
+                    await db.collection("usuarios").doc(userId).delete();
+                    alert("Usuario eliminado exitosamente");
+                    refreshUnificationList();
+                }
+            } catch (error) {
+                console.error("Error al eliminar usuario:", error);
+                alert("Error al eliminar usuario: " + error.message);
+            }
+        }
+
+        // Función para actualizar la lista de unificación
+        function refreshUnificationList() {
+            findUnlinkedUsers();
+        }
+
+        // Cargar movimientos (solo administradores)
+        function cargarMovimientos() {
+            if (currentUserRole !== 'administrador') return;
+            
+            movementsTableBody.innerHTML = '<tr><td colspan="6" class="loading">Cargando movimientos...</td></tr>';
+
+            const startDate = movementStartDate.valueAsDate;
+            const endDate = movementEndDate.valueAsDate;
+
+            // Ajustar la fecha final para incluir todo el día
+            endDate.setHours(23, 59, 59, 999);
+
+            let query = db.collection("movimientos")
+                .where("fecha", ">=", startDate)
+                .where("fecha", "<=", endDate)
+                .orderBy("fecha", "desc");
+
+            query.get()
+                .then((querySnapshot) => {
+                    movementsTableBody.innerHTML = '';
+                    allMovements = []; // Limpiar movimientos anteriores
+
+                    if (querySnapshot.empty) {
+                        movementsTableBody.innerHTML = '<tr><td colspan="6">No hay movimientos para los filtros seleccionados</td></tr>';
+                        return;
+                    }
+
+                    // Obtener todos los IDs de usuario para buscar sus nombres
+                    const userIds = new Set();
+                    querySnapshot.forEach(doc => {
+                        const movimiento = doc.data();
+                        userIds.add(movimiento.userId);
+                        userIds.add(movimiento.responsableId);
+                        
+                        // Guardar movimiento para usar en los reportes
+                        allMovements.push(movimiento);
+                    });
+
+                    // Obtener información de usuarios
+                    const usersPromise = Promise.all(
+                        Array.from(userIds).map(userId =>
+                            db.collection("usuarios").doc(userId).get()
+                                .then(userDoc => ({
+                                    id: userId,
+                                    name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido"
+                                }))
+                        )
+                    );
+
+                    usersPromise.then(users => {
+                        const usersMap = new Map(users.map(user => [user.id, user]));
+
+                        // Agrupar movimientos por usuario
+                        const movimientosPorUsuario = {};
+
+                        querySnapshot.forEach((doc) => {
+                            const movimiento = doc.data();
+                            const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
+
+                            if (userInfo.name != "Usuario") {
+                                if (!movimientosPorUsuario[userInfo.name]) {
+                                    movimientosPorUsuario[userInfo.name] = [];
+                                }
+
+                                // Agregar información completa del movimiento
+                                const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
+                                const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
+
+                                movimientosPorUsuario[userInfo.name].push({
+                                    estadoAnterior: movimiento.estadoAnterior,
+                                    estadoNuevo: movimiento.estadoNuevo,
+                                    fecha: fecha,
+                                    responsable: responsableInfo.name,
+                                    ubicacion: movimiento.ubicacion || "No registrada",
+                                    docId: doc.id
+                                });
+                            }
+                        });
+
+                        // Crear filas agrupadas por usuario
+                        Object.keys(movimientosPorUsuario).sort().forEach(userName => {
+                            const movimientos = movimientosPorUsuario[userName];
+
+                            // Fila principal del usuario (se puede hacer clic para expandir/colapsar)
+                            const userRow = document.createElement('tr');
+                            userRow.className = 'user-header';
+                            userRow.innerHTML = `
+                        <td colspan="6">
+                            <span class="toggle-icon">▶</span>
+                            ${userName} 
+                            <span class="movement-count">(${movimientos.length} movimiento${movimientos.length !== 1 ? 's' : ''})</span>
+                        </td>
+                    `;
+
+                            movementsTableBody.appendChild(userRow);
+
+                            // Contenedor para los movimientos de este usuario (inicialmente oculto)
+                            const detallesContainer = document.createElement('tr');
+                            detallesContainer.className = 'user-details';
+                            const detallesCell = document.createElement('td');
+                            detallesCell.colSpan = 6;
+
+                            const tablaDetalles = document.createElement('table');
+                            tablaDetalles.className = 'movement-details';
+
+                            // Crear encabezado para la tabla de detalles
+                            const detallesHeader = document.createElement('tr');
+                            detallesHeader.innerHTML = `
+                        <th>Estado Anterior</th>
+                        <th>Estado Nuevo</th>
+                        <th>Fecha</th>
+                        <th>Ubicación</th>
+                        <th>Responsable</th>
+                    `;
+                            tablaDetalles.appendChild(detallesHeader);
+
+                            // Agregar cada movimiento como fila en la tabla de detalles
+                            movimientos.forEach(movimiento => {
+                                const filaDetalle = document.createElement('tr');
+                                filaDetalle.innerHTML = `
+                            <td><span class="status ${estados[movimiento.estadoAnterior]?.clase || 'status-muestreo'}">${estados[movimiento.estadoAnterior]?.texto || 'N/A'}</span></td>
+                            <td><span class="status ${estados[movimiento.estadoNuevo]?.clase || 'status-muestreo'}">${estados[movimiento.estadoNuevo]?.texto || 'N/A'}</span></td>
+                            <td>${movimiento.fecha.toLocaleString()}</td>
+                            <td>${movimiento.ubicacion}</td>
+                            <td>${movimiento.responsable}</td>
+                        `;
+                                tablaDetalles.appendChild(filaDetalle);
+                            });
+
+                            detallesCell.appendChild(tablaDetalles);
+                            detallesContainer.appendChild(detallesCell);
+                            movementsTableBody.appendChild(detallesContainer);
+
+                            // Añadir evento para expandir/colapsar
+                            userRow.addEventListener('click', function () {
+                                const icon = this.querySelector('.toggle-icon');
+                                const detalles = this.nextElementSibling;
+
+                                if (detalles.style.display === 'none') {
+                                    detalles.style.display = 'table-row';
+                                    icon.textContent = '▼';
+                                } else {
+                                    detalles.style.display = 'none';
+                                    icon.textContent = '▶';
+                                }
+                            });
+
+                            // Inicialmente oculto
+                            detallesContainer.style.display = 'none';
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al cargar movimientos: ", error);
+                    movementsTableBody.innerHTML = '<tr><td colspan="6">Error al cargar los movimientos</td></tr>';
+                });
+        }
+
+        // Obtener rango de fechas según el periodo seleccionado
+        function obtenerRangoFechas(periodo, fechaBase) {
+            const fecha = new Date(fechaBase);
+            let inicio, fin;
+            
+            switch (periodo) {
+                case 'diario':
+                    inicio = new Date(fecha);
+                    inicio.setHours(0, 0, 0, 0);
+                    fin = new Date(fecha);
+                    fin.setHours(23, 59, 59, 999);
+                    break;
+                case 'semanal':
+                    // Obtener el lunes de la semana
+                    const diaSemana = fecha.getDay();
+                    const diffLunes = fecha.getDate() - diaSemana + (diaSemana === 0 ? -6 : 1);
+                    inicio = new Date(fecha.setDate(diffLunes));
+                    inicio.setHours(0, 0, 0, 0);
+                    
+                    // Obtener el domingo de la semana
+                    fin = new Date(inicio);
+                    fin.setDate(inicio.getDate() + 6);
+                    fin.setHours(23, 59, 59, 999);
+                    break;
+                case 'mensual':
+                    inicio = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+                    inicio.setHours(0, 0, 0, 0);
+                    fin = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+                    fin.setHours(23, 59, 59, 999);
+                    break;
+                default:
+                    inicio = new Date(fecha);
+                    inicio.setHours(0, 0, 0, 0);
+                    fin = new Date(fecha);
+                    fin.setHours(23, 59, 59, 999);
+            }
+            
+            return { inicio, fin };
+        }
+
+        // Obtener movimientos para el reporte
+        async function obtenerMovimientosParaReporte(periodo, fecha) {
+            const { inicio, fin } = obtenerRangoFechas(periodo, fecha);
+            
+            try {
+                const querySnapshot = await db.collection("movimientos")
+                    .where("fecha", ">=", inicio)
+                    .where("fecha", "<=", fin)
+                    .orderBy("fecha", "asc")
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    return [];
+                }
+                
+                const movimientos = [];
+                const userIds = new Set();
+                
+                querySnapshot.forEach(doc => {
+                    const movimiento = doc.data();
+                    movimientos.push({
+                        ...movimiento,
+                        fecha: movimiento.fecha.toDate()
+                    });
+                    userIds.add(movimiento.userId);
+                });
+                
+                // Obtener información de usuarios
+                const usersInfo = {};
+                for (const userId of userIds) {
+                    const userDoc = await db.collection("usuarios").doc(userId).get();
+                    if (userDoc.exists) {
+                        usersInfo[userId] = userDoc.data().nombre;
+                    } else {
+                        usersInfo[userId] = "Usuario desconocido";
+                    }
+                }
+                
+                // Agregar nombre de usuario a cada movimiento
+                movimientos.forEach(movimiento => {
+                    movimiento.nombreUsuario = usersInfo[movimiento.userId];
+                });
+                
+                return movimientos;
+            } catch (error) {
+                console.error("Error al obtener movimientos para reporte:", error);
+                return [];
+            }
+        }
+
+        // Generar reporte en PDF (solo administradores)
+        async function generarPDF(tipo) {
+            if (currentUserRole !== 'administrador') return;
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const periodo = periodoSelect.value;
+            const fecha = fechaInput.value;
+
+            if (tipo === 'personal') {
+                // Obtener movimientos para el periodo seleccionado
+                const movimientos = await obtenerMovimientosParaReporte(periodo, fecha);
+                
+                // Agrupar movimientos por usuario
+                const movimientosPorUsuario = {};
+                movimientos.forEach(movimiento => {
+                    if (!movimientosPorUsuario[movimiento.nombreUsuario]) {
+                        movimientosPorUsuario[movimiento.nombreUsuario] = [];
+                    }
+                    movimientosPorUsuario[movimiento.nombreUsuario].push(movimiento);
+                });
+
+                // Título del reporte
+                doc.setFontSize(18);
+                doc.text(`Reporte de Personal - ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}`, 14, 15);
+                doc.setFontSize(12);
+                doc.text(`Fecha: ${fecha}`, 14, 22);
+
+                let yPos = 30;
+                const pageHeight = doc.internal.pageSize.height;
+                const margin = 14;
+
+                // Para cada usuario, crear una sección
+                Object.keys(movimientosPorUsuario).sort().forEach(usuario => {
+                    // Verificar si necesitamos una nueva página
+                    if (yPos > pageHeight - 50) {
+                        doc.addPage();
+                        yPos = margin;
+                    }
+
+                    // Nombre del usuario
+                    doc.setFontSize(14);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(usuario, margin, yPos);
+                    yPos += 8;
+
+                    // Encabezados de la tabla
+                    const headers = ["Fecha", "Estado"];
+                    let xPos = margin;
+                    
+                    doc.setFontSize(10);
+                    doc.setFont(undefined, 'bold');
+                    
+                    // Dibujar encabezados
+                    headers.forEach(header => {
+                        doc.text(header, xPos, yPos);
+                        xPos += 40;
+                    });
+                    
+                    yPos += 6;
+                    
+                    // Línea separadora
+                    doc.line(margin, yPos, 200, yPos);
+                    yPos += 4;
+
+                    // Movimientos del usuario
+                    doc.setFont(undefined, 'normal');
+                    movimientosPorUsuario[usuario].forEach(movimiento => {
+                        // Verificar si necesitamos una nueva página
+                        if (yPos > pageHeight - 20) {
+                            doc.addPage();
+                            yPos = margin;
+                            
+                            // Redibujar encabezados en la nueva página
+                            doc.setFont(undefined, 'bold');
+                            xPos = margin;
+                            headers.forEach(header => {
+                                doc.text(header, xPos, yPos);
+                                xPos += 40;
+                            });
+                            yPos += 6;
+                            doc.line(margin, yPos, 200, yPos);
+                            yPos += 4;
+                            doc.setFont(undefined, 'normal');
+                        }
+                        
+                        // Fecha del movimiento
+                        doc.text(movimiento.fecha.toLocaleString(), margin, yPos);
+                        
+                        // Estado del movimiento
+                        doc.text(estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo, margin + 40, yPos);
+                        
+                        yPos += 6;
+                    });
+                    
+                    yPos += 10; // Espacio entre usuarios
+                });
+
+                // Guardar el PDF
+                doc.save(`reporte_personal_${periodo}_${fecha}.pdf`);
+            } else if (tipo === 'movimientos') {
+                // Título del reporte
+                doc.setFontSize(18);
+                doc.text(`Reporte de Movimientos - ${periodo.charAt(0).toUpperCase() + periodo.slice(1)}`, 14, 15);
+                doc.setFontSize(12);
+                doc.text(`Fecha: ${fecha}`, 14, 22);
+
+                // Obtener información de usuarios para los movimientos
+                const userIds = new Set();
+                allMovements.forEach(movimiento => {
+                    userIds.add(movimiento.userId);
+                    userIds.add(movimiento.responsableId);
+                });
+
+                // Obtener información de usuarios
+                const usersPromise = Promise.all(
+                    Array.from(userIds).map(userId =>
+                        db.collection("usuarios").doc(userId).get()
+                            .then(userDoc => ({
+                                id: userId,
+                                name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido"
+                            }))
+                    )
+                );
+
+                usersPromise.then(users => {
+                    const usersMap = new Map(users.map(user => [user.id, user]));
+
+                    // Preparar datos para el PDF
+                    const headers = [["Usuario", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"]];
+                    const datos = [];
+
+                    allMovements.forEach(movimiento => {
+                        const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
+                        const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
+                        const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
+
+                        if (userInfo.name != "Usuario") {
+                            datos.push([
+                                userInfo.name,
+                                estados[movimiento.estadoAnterior]?.texto || movimiento.estadoAnterior || 'N/A',
+                                estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo || 'N/A',
+                                fecha.toLocaleString(),
+                                movimiento.ubicacion || "No registrada",
+                                responsableInfo.name
+                            ]);
+                        }
+                    });
+
+                    // Generar tabla en el PDF
+                    doc.autoTable({
+                        head: headers,
+                        body: datos,
+                        startY: 30,
+                        styles: { fontSize: 9 },
+                        headStyles: { fillColor: [44, 62, 80] }
+                    });
+
+                    // Guardar el PDF
+                    doc.save(`reporte_movimientos_${periodo}_${fecha}.pdf`);
+                });
+            }
+        }
+
+        // Generar reporte en Excel (solo administradores)
+        async function generarExcel(tipo) {
+            if (currentUserRole !== 'administrador') return;
+            
+            const periodo = periodoSelect.value;
+            const fecha = fechaInput.value;
+
+            if (tipo === 'personal') {
+                // Obtener movimientos para el periodo seleccionado
+                const movimientos = await obtenerMovimientosParaReporte(periodo, fecha);
+                
+                // Agrupar movimientos por usuario
+                const movimientosPorUsuario = {};
+                movimientos.forEach(movimiento => {
+                    if (!movimientosPorUsuario[movimiento.nombreUsuario]) {
+                        movimientosPorUsuario[movimiento.nombreUsuario] = [];
+                    }
+                    movimientosPorUsuario[movimiento.nombreUsuario].push(movimiento);
+                });
+
+                // Crear libro de trabajo
+                const wb = XLSX.utils.book_new();
+
+                // Para cada usuario, crear una hoja
+                Object.keys(movimientosPorUsuario).sort().forEach(usuario => {
+                    // Preparar datos para Excel
+                    const datos = [];
+                    
+                    // Encabezados
+                    datos.push(["Fecha", "Estado Anterior", "Estado Nuevo", "Ubicación", "Responsable"]);
+                    
+                    // Movimientos del usuario
+                    movimientosPorUsuario[usuario].forEach(movimiento => {
+                        datos.push([
+                            movimiento.fecha.toLocaleString(),
+                            estados[movimiento.estadoAnterior]?.texto || movimiento.estadoAnterior || 'N/A',
+                            estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo || 'N/A',
+                            movimiento.ubicacion || "No registrada",
+                            movimiento.responsableId // Aquí podrías agregar el nombre del responsable si lo tienes
+                        ]);
+                    });
+                    
+                    // Crear hoja y añadir al libro
+                    const ws = XLSX.utils.aoa_to_sheet(datos);
+                    XLSX.utils.book_append_sheet(wb, ws, usuario.substring(0, 30)); // Limitar longitud del nombre de hoja
+                });
+
+                // Guardar archivo
+                XLSX.writeFile(wb, `reporte_personal_${periodo}_${fecha}.xlsx`);
+            } else if (tipo === 'movimientos') {
+                // Obtener información de usuarios para los movimientos
+                const userIds = new Set();
+                allMovements.forEach(movimiento => {
+                    userIds.add(movimiento.userId);
+                    userIds.add(movimiento.responsableId);
+                });
+
+                // Obtener información de usuarios
+                const usersPromise = Promise.all(
+                    Array.from(userIds).map(userId =>
+                        db.collection("usuarios").doc(userId).get()
+                            .then(userDoc => ({
+                                id: userId,
+                                name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido"
+                            }))
+                    )
+                );
+
+                usersPromise.then(users => {
+                    const usersMap = new Map(users.map(user => [user.id, user]));
+
+                    // Preparar datos para Excel
+                    const datos = [];
+                    const headers = ["Usuario", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"];
+                    datos.push(headers);
+
+                    allMovements.forEach(movimiento => {
+                        const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
+                        const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
+                        const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
+
+                        if (userInfo.name != "Usuario") {
+                            datos.push([
+                                userInfo.name,
+                                estados[movimiento.estadoAnterior]?.texto || movimiento.estadoAnterior || 'N/A',
+                                estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo || 'N/A',
+                                fecha.toLocaleString(),
+                                movimiento.ubicacion || "No registrada",
+                                responsableInfo.name
+                            ]);
+                        }
+                    });
+
+                    // Crear libro de trabajo y hoja
+                    const wb = XLSX.utils.book_new();
+                    const ws = XLSX.utils.aoa_to_sheet(datos);
+
+                    // Añadir hoja al libro
+                    XLSX.utils.book_append_sheet(wb, ws, "Reporte Movimientos");
+
+                    // Guardar archivo
+                    XLSX.writeFile(wb, `reporte_movimientos_${periodo}_${fecha}.xlsx`);
+                });
+            }
+        }
+
+        // Inicializar la aplicación cuando se carga la página
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
 </html>
+
+
+
 
