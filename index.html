@@ -346,6 +346,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
+        /* Todos los estilos CSS anteriores se mantienen igual */
         :root {
             --color-oficina: #4CAF50;
             --color-muestreo: #FF9800;
@@ -360,6 +361,13 @@
             --color-light: #ecf0f1;
             --color-admin: #E91E63;
             --color-user: #2196F3;
+            --color-area-muestreo: #FF9800;
+            --color-area-rrhh: #9C27B0;
+            --color-area-administracion: #2196F3;
+            --color-area-direccion: #F44336;
+            --color-proyecto: #8BC34A;
+            --color-gasto: #FF5722;
+            --color-ingreso: #4CAF50;
         }
 
         * {
@@ -423,6 +431,35 @@
 
         .role-user {
             background-color: var(--color-user);
+            color: white;
+        }
+
+        .area-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .area-muestreo {
+            background-color: var(--color-area-muestreo);
+            color: white;
+        }
+
+        .area-rrhh {
+            background-color: var(--color-area-rrhh);
+            color: white;
+        }
+
+        .area-administracion {
+            background-color: var(--color-area-administracion);
+            color: white;
+        }
+
+        .area-direccion {
+            background-color: var(--color-area-direccion);
             color: white;
         }
 
@@ -589,7 +626,7 @@
             padding: 30px;
             border-radius: 8px;
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
@@ -609,7 +646,7 @@
             font-weight: 600;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -860,8 +897,9 @@
         .info-group span {
             display: block;
             padding: 8px;
-            background-color: #f9f9f9;
+            /* background-color: #f9f9f9; */
             border-radius: 4px;
+            text-align: center;
             border: 1px solid #eee;
         }
 
@@ -876,7 +914,7 @@
             color: var(--color-primary);
         }
 
-        /* Nuevos estilos para la herramienta de unificación */
+        /* Estilos para la herramienta de unificación */
         .unification-tool {
             background-color: white;
             padding: 20px;
@@ -945,7 +983,7 @@
             font-style: italic;
         }
 
-        /* Nuevos estilos para la pestaña de edición */
+        /* Estilos para la pestaña de edición */
         .edit-user-section {
             background-color: white;
             padding: 20px;
@@ -1028,7 +1066,7 @@
             margin-top: 5px;
         }
 
-        /* Nuevos estilos para mostrar el estado actual con color */
+        /* Estilos para mostrar el estado actual con color */
         .current-status-display {
             display: flex;
             align-items: center;
@@ -1065,6 +1103,282 @@
 
         .status-select option {
             padding: 8px;
+        }
+
+        /* Estilos para la gestión de áreas */
+        .areas-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .areas-section h2 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+        
+        .areas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .areas-table th,
+        .areas-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .areas-table th {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .areas-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .area-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        /* Nuevos estilos para gestión de proyectos */
+        .project-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .project-section h2 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+        
+        .projects-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .projects-table th,
+        .projects-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .projects-table th {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .projects-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .project-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .status-active {
+            background-color: var(--color-proyecto);
+        }
+        
+        .status-completed {
+            background-color: var(--color-secondary);
+        }
+        
+        .status-cancelled {
+            background-color: var(--color-salidaSR);
+        }
+        
+        .financial-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .financial-section h2 {
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+        
+        .financial-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .financial-card {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .financial-card.income {
+            border-left-color: var(--color-ingreso);
+        }
+        
+        .financial-card.expense {
+            border-left-color: var(--color-gasto);
+        }
+        
+        .financial-card.balance {
+            border-left-color: var(--color-secondary);
+        }
+        
+        .financial-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .financial-card .amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .financial-card.income .amount {
+            color: var(--color-ingreso);
+        }
+        
+        .financial-card.expense .amount {
+            color: var(--color-gasto);
+        }
+        
+        .financial-card.balance .amount {
+            color: var(--color-secondary);
+        }
+        
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .transactions-table th,
+        .transactions-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .transactions-table th {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .transaction-income {
+            color: var(--color-ingreso);
+            font-weight: bold;
+        }
+        
+        .transaction-expense {
+            color: var(--color-gasto);
+            font-weight: bold;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #eee;
+            color: #333;
+        }
+        
+        .project-participants {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .participant-badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            background-color: #e0e0e0;
+        }
+        
+        .project-details {
+            background-color: #fafafa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .project-details h3 {
+            margin-top: 0;
+            color: var(--color-primary);
+        }
+        
+        .project-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+        }
+        
+        .info-item label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        
+        .info-item span {
+            display: block;
+            padding: 8px;
+            /* background-color: white; */
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+        
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            height: 300px;
+        }
+        
+        .chart-placeholder {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            color: #777;
+            font-style: italic;
         }
 
         @media (max-width: 768px) {
@@ -1138,6 +1452,14 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            
+            .financial-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-info-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -1187,6 +1509,7 @@
             <div class="auth-section">
                 <span id="userEmail"></span>
                 <span id="userRoleBadge" class="user-role"></span>
+                <span id="userAreaBadge" class="area-badge"></span>
                 <button id="btnLogout" class="btn btn-danger">Cerrar Sesión</button>
             </div>
         </header>
@@ -1198,12 +1521,16 @@
                     <h2>Mi Información</h2>
                     <div class="user-info">
                         <div class="info-group">
-                            <label>Nombre:</label>
+                            <label>Nombre completo:</label>
                             <span id="myUserName"></span>
                         </div>
                         <div class="info-group">
                             <label>Email:</label>
                             <span id="myUserEmail"></span>
+                        </div>
+                        <div class="info-group">
+                            <label>Área:</label>
+                            <span id="myUserArea"></span>
                         </div>
                         <div class="info-group">
                             <label>Estado actual:</label>
@@ -1224,11 +1551,11 @@
                         <div class="status-buttons">
                             <button class="status-btn oficina" data-status="oficina">Oficina</button>
                             <button class="status-btn muestreo" data-status="muestreo">Muestreo</button>
-                            <button class="status-btn salidaSR" data-status="salidaSR">Salida Sin Regreso</button>
+                            <button class="status-btn salidaSR" data-status="salidaSR">Salida Intermitente</button>
                             <button class="status-btn salidaCR" data-status="salidaCR">Salida Con Regreso</button>
                             <button class="status-btn descanso" data-status="descanso">Descanso</button>
                             <button class="status-btn vacaciones" data-status="vacaciones">Vacaciones</button>
-                            <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Vacaciones TxT</button>
+                            <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Permiso TxT</button>
                             <button class="status-btn salida" data-status="salida">Salida</button>
                         </div>
                     </div>
@@ -1241,9 +1568,11 @@
                     <div class="tab active" data-tab="control">Control de Personal</div>
                     <div class="tab" data-tab="add-user">Agregar Usuario</div>
                     <div class="tab" data-tab="edit-user">Editar Usuario</div>
+                    <div class="tab" data-tab="areas">Gestión de Áreas</div>
                     <div class="tab" data-tab="movements">Movimientos de Personal</div>
                     <div class="tab" data-tab="cards">Vista de Recuadros</div>
                     <div class="tab" data-tab="unification">Unificar Usuarios</div>
+                    <div class="tab" data-tab="projects">Gestión de Proyectos</div>
                 </div>
 
                 <!-- Pestaña de Control de Personal -->
@@ -1263,6 +1592,13 @@
                             <input type="date" id="fecha">
                         </div>
 
+                        <div>
+                            <label for="areaFilter">Filtrar por área:</label>
+                            <select id="areaFilter">
+                                <option value="todos">Todas las áreas</option>
+                            </select>
+                        </div>
+
                         <div class="report-buttons">
                             <button class="btn btn-pdf" id="btn-pdf">Generar PDF</button>
                             <button class="btn btn-excel" id="btn-excel">Generar Excel</button>
@@ -1274,7 +1610,6 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th>Email</th>
-                                <th>Rol</th>
                                 <th>Estado</th>
                                 <th>Última actualización</th>
                                 <th>Ubicación</th>
@@ -1283,7 +1618,7 @@
                         </thead>
                         <tbody id="user-table-body">
                             <tr>
-                                <td colspan="7" class="loading">Cargando datos...</td>
+                                <td colspan="8" class="loading">Cargando datos...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1296,25 +1631,45 @@
                         <form id="addUserForm">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="newUserName">Nombre</label>
-                                    <input type="text" id="newUserName" required>
+                                    <label for="newUserNombre">Nombre</label>
+                                    <input type="text" id="newUserNombre" required>
                                 </div>
+                                <div class="form-group">
+                                    <label for="newUserApellidoPaterno">Apellido Paterno</label>
+                                    <input type="text" id="newUserApellidoPaterno" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserApellidoMaterno">Apellido Materno</label>
+                                    <input type="text" id="newUserApellidoMaterno">
+                                </div>
+                            </div>
+                            <div class="form-row">
                                 <div class="form-group">
                                     <label for="newUserEmail">Email</label>
                                     <input type="email" id="newUserEmail" required>
                                 </div>
+                                <div class="form-group">
+                                    <label for="newUserArea">Área</label>
+                                    <select id="newUserArea" required>
+                                        <option value="">Seleccione un área</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newUserPassword">Contraseña</label>
+                                    <input type="password" id="newUserPassword" required>
+                                </div>
                                 <div class="form-group">
                                     <label for="newUserStatus">Estado inicial</label>
                                     <select id="newUserStatus" required class="status-select">
                                         <option value="oficina">Oficina</option>
                                         <option value="muestreo">Muestreo</option>
-                                        <option value="salidaSR">Salida sin regreso</option>
+                                        <option value="salidaSR">Salida Intermitente</option>
                                         <option value="salidaCR">Salida con regreso</option>
                                         <option value="descanso">Descanso</option>
                                         <option value="vacaciones">Vacaciones</option>
-                                        <option value="vacacionesTxt">Vacaciones TxT</option>
+                                        <option value="vacacionesTxt">Permiso TxT</option>
                                         <option value="salida">Salida</option>
                                     </select>
                                 </div>
@@ -1332,7 +1687,7 @@
                     </div>
                 </div>
 
-                <!-- Nueva Pestaña de Editar Usuario -->
+                <!-- Pestaña de Editar Usuario -->
                 <div class="tab-content" id="edit-user-tab">
                     <div class="edit-user-section">
                         <h2>Editar Usuario</h2>
@@ -1354,12 +1709,29 @@
                             
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="editUserName">Nombre</label>
-                                    <input type="text" id="editUserName" required>
+                                    <label for="editUserNombre">Nombre</label>
+                                    <input type="text" id="editUserNombre" required>
                                 </div>
+                                <div class="form-group">
+                                    <label for="editUserApellidoPaterno">Apellido Paterno</label>
+                                    <input type="text" id="editUserApellidoPaterno" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserApellidoMaterno">Apellido Materno</label>
+                                    <input type="text" id="editUserApellidoMaterno">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
                                 <div class="form-group">
                                     <label for="editUserEmail">Email</label>
                                     <input type="email" id="editUserEmail" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editUserArea">Área</label>
+                                    <select id="editUserArea" required>
+                                        <option value="">Seleccione un área</option>
+                                    </select>
                                 </div>
                             </div>
                             
@@ -1369,11 +1741,11 @@
                                     <select id="editUserStatus" required class="status-select">
                                         <option value="oficina">Oficina</option>
                                         <option value="muestreo">Muestreo</option>
-                                        <option value="salidaSR">Salida sin regreso</option>
+                                        <option value="salidaSR">Salida Intermitente</option>
                                         <option value="salidaCR">Salida con regreso</option>
                                         <option value="descanso">Descanso</option>
                                         <option value="vacaciones">Vacaciones</option>
-                                        <option value="vacacionesTxt">Vacaciones TxT</option>
+                                        <option value="vacacionesTxt">Permiso TxT</option>
                                         <option value="salida">Salida</option>
                                     </select>
                                 </div>
@@ -1401,6 +1773,30 @@
                     </div>
                 </div>
 
+                <!-- Pestaña de Gestión de Áreas -->
+                <div class="tab-content" id="areas-tab">
+                    <div class="areas-section">
+                        <h2>Gestión de Áreas</h2>
+                        <p>Administre las áreas disponibles para asignar a los usuarios.</p>
+                        
+                        <table class="areas-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Color</th>
+                                    <th>Número de Usuarios</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areas-table-body">
+                                <tr>
+                                    <td colspan="4" class="loading">Cargando áreas...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Pestaña de Movimientos de Personal -->
                 <div class="tab-content" id="movements-tab">
                     <div class="filters">
@@ -1423,6 +1819,7 @@
                         <thead>
                             <tr>
                                 <th>Usuario</th>
+                                <th>Área</th>
                                 <th>Estado Anterior</th>
                                 <th>Estado Nuevo</th>
                                 <th>Fecha Cambio</th>
@@ -1432,7 +1829,7 @@
                         </thead>
                         <tbody id="movements-table-body">
                             <tr>
-                                <td colspan="6" class="loading">Seleccione filtros para ver los movimientos</td>
+                                <td colspan="7" class="loading">Seleccione filtros para ver los movimientos</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1447,12 +1844,18 @@
                                 <option value="todos">Todos</option>
                                 <option value="oficina">Oficina</option>
                                 <option value="muestreo">Muestreo</option>
-                                <option value="salidaSR">Salida Sin Regreso</option>
+                                <option value="salidaSR">Salida Intermitente</option>
                                 <option value="salidaCR">Salida con regreso</option>
                                 <option value="descanso">Descanso</option>
                                 <option value="vacaciones">Vacaciones</option>
-                                <option value="vacacionesTxt">Vacaciones TxT</option>
+                                <option value="vacacionesTxt">Permiso TxT</option>
                                 <option value="salida">Salida</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="cardsAreaFilter">Filtrar por área:</label>
+                            <select id="cardsAreaFilter">
+                                <option value="todos">Todas las áreas</option>
                             </select>
                         </div>
                         <button class="btn btn-primary" id="btnFilterCards">Filtrar</button>
@@ -1463,11 +1866,11 @@
                         <div class="status-buttons">
                             <button class="status-btn oficina" data-status="oficina">Oficina</button>
                             <button class="status-btn muestreo" data-status="muestreo">Muestreo</button>
-                            <button class="status-btn salidaSR" data-status="salidaSR">Salida Sin Regreso</button>
+                            <button class="status-btn salidaSR" data-status="salidaSR">Salida Intermitente</button>
                             <button class="status-btn salidaCR" data-status="salidaCR">Salida Con Regreso</button>
                             <button class="status-btn descanso" data-status="descanso">Descanso</button>
                             <button class="status-btn vacaciones" data-status="vacaciones">Vacaciones</button>
-                            <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Vacaciones TxT</button>
+                            <button class="status-btn vacacionesTxt" data-status="vacacionesTxt">Permiso TxT</button>
                             <button class="status-btn salida" data-status="salida">Salida</button>
                         </div>
                     </div>
@@ -1493,7 +1896,252 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Nueva Pestaña de Gestión de Proyectos -->
+                <div class="tab-content" id="projects-tab">
+                    <div class="project-section">
+                        <h2>Gestión de Proyectos</h2>
+                        <button class="btn btn-primary" id="btnNewProject" onclick="showProjectModal()">Nuevo Proyecto</button>
+                        <br>
+                        <table class="projects-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Líder</th>
+                                    <th>Estado</th>
+                                    <th>Presupuesto</th>
+                                    <th>Gastos</th>
+                                    <th>Saldo</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projects-table-body">
+                                <tr>
+                                    <td colspan="9" class="loading">Cargando proyectos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="financial-section" id="project-details-section" style="display: none;">
+                        <h2 id="project-details-title">Detalles del Proyecto</h2>
+                        
+                        <div class="project-details">
+                            <div class="project-info-grid">
+                                <div class="info-item">
+                                    <label>Nombre:</label>
+                                    <span id="detail-project-name"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Líder:</label>
+                                    <span id="detail-project-leader"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Estado:</label>
+                                    <span id="detail-project-status"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Presupuesto:</label>
+                                    <span id="detail-project-budget"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Fecha Inicio:</label>
+                                    <span id="detail-project-start"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Fecha Fin:</label>
+                                    <span id="detail-project-end"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Descripción:</label>
+                                <span id="detail-project-description"></span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Participantes:</label>
+                                <div class="project-participants" id="detail-project-participants"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="financial-summary">
+                            <div class="financial-card income">
+                                <h3>Ingresos</h3>
+                                <div class="amount" id="summary-income">$0.00</div>
+                            </div>
+                            <div class="financial-card expense">
+                                <h3>Gastos</h3>
+                                <div class="amount" id="summary-expense">$0.00</div>
+                            </div>
+                            <div class="financial-card balance">
+                                <h3>Saldo</h3>
+                                <div class="amount" id="summary-balance">$0.00</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-placeholder">
+                                Gráfico de distribución de gastos por categoría
+                            </div>
+                        </div>
+                        
+                        <div class="filters">
+                            <div>
+                                <label for="transactionType">Tipo:</label>
+                                <select id="transactionType">
+                                    <option value="all">Todos</option>
+                                    <option value="income">Ingresos</option>
+                                    <option value="expense">Gastos</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="transactionCategory">Categoría:</label>
+                                <select id="transactionCategory">
+                                    <option value="all">Todas</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="btnAddTransaction">Agregar Transacción</button>
+                            <div class="report-buttons">
+                                <button class="btn btn-pdf" id="btn-pdf-project">Generar PDF</button>
+                                <button class="btn btn-excel" id="btn-excel-project">Generar Excel</button>
+                                <button class="btn btn-secondary" id="btn-close-project">Cerrar Proyecto</button>
+                            </div>
+                        </div>
+                        
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Descripción</th>
+                                    <th>Categoría</th>
+                                    <th>Tipo</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table-body">
+                                <tr>
+                                    <td colspan="6" class="loading">Seleccione un proyecto para ver las transacciones</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear/editar proyecto -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <h2 id="projectModalTitle">Nuevo Proyecto</h2>
+            <form id="projectForm">
+                <input type="hidden" id="editProjectId">
+                
+                <div class="form-group">
+                    <label for="projectName">Nombre del Proyecto</label>
+                    <input type="text" id="projectName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDescription">Descripción</label>
+                    <textarea id="projectDescription" rows="3"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectLeader">Líder del Proyecto</label>
+                        <select id="projectLeader" required>
+                            <option value="">Seleccione un líder</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectBudget">Presupuesto</label>
+                        <input type="number" id="projectBudget" step="0.01" min="0" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStartDate">Fecha de Inicio</label>
+                        <input type="date" id="projectStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">Fecha de Finalización</label>
+                        <input type="date" id="projectEndDate">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectParticipants">Participantes</label>
+                    <select id="projectParticipants" multiple>
+                        <!-- Se llenará con usuarios disponibles -->
+                    </select>
+                    <small>Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples participantes</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="btnCancelProject" class="btn btn-danger">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Proyecto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar transacción -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <h2 id="transactionModalTitle">Nueva Transacción</h2>
+            <form id="transactionForm">
+                <input type="hidden" id="editTransactionId">
+                <input type="hidden" id="transactionProjectId">
+                
+                <div class="form-group">
+                    <label for="transactionTypeSelect">Tipo</label>
+                    <select id="transactionTypeSelect" required>
+                        <option value="">Seleccione tipo</option>
+                        <option value="income">Ingreso</option>
+                        <option value="expense">Gasto</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionCategorySelect">Categoría</label>
+                    <select id="transactionCategorySelect" required>
+                        <option value="">Seleccione categoría</option>
+                        <!-- Se llenará dinámicamente -->
+                        <option value="new">+ Crear nueva categoría</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="newCategoryGroup" style="display: none;">
+                    <label for="newCategoryName">Nombre de la nueva categoría</label>
+                    <input type="text" id="newCategoryName">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionDescription">Descripción</label>
+                    <input type="text" id="transactionDescription" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionAmount">Monto</label>
+                    <input type="number" id="transactionAmount" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionDate">Fecha</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="btnCancelTransaction" class="btn btn-danger">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Transacción</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1528,11 +2176,13 @@
         const app = document.getElementById('app');
         const userEmail = document.getElementById('userEmail');
         const userRoleBadge = document.getElementById('userRoleBadge');
+        const userAreaBadge = document.getElementById('userAreaBadge');
         const btnLogout = document.getElementById('btnLogout');
         const addUserForm = document.getElementById('addUserForm');
         const addUserMessage = document.getElementById('addUserMessage');
         const periodoSelect = document.getElementById('periodo');
         const fechaInput = document.getElementById('fecha');
+        const areaFilter = document.getElementById('areaFilter');
         const btnPdf = document.getElementById('btn-pdf');
         const btnExcel = document.getElementById('btn-excel');
         const tableBody = document.getElementById('user-table-body');
@@ -1545,6 +2195,7 @@
         const btnPdfMovements = document.getElementById('btn-pdf-movements');
         const btnExcelMovements = document.getElementById('btn-excel-movements');
         const cardsFilter = document.getElementById('cardsFilter');
+        const cardsAreaFilter = document.getElementById('cardsAreaFilter');
         const btnFilterCards = document.getElementById('btnFilterCards');
         const statusOptions = document.getElementById('statusOptions');
         const selectedUserName = document.getElementById('selectedUserName');
@@ -1554,6 +2205,7 @@
         const adminView = document.getElementById('admin-view');
         const myUserName = document.getElementById('myUserName');
         const myUserEmail = document.getElementById('myUserEmail');
+        const myUserArea = document.getElementById('myUserArea');
         const myUserStatus = document.getElementById('myUserStatus');
         const myUserLastUpdate = document.getElementById('myUserLastUpdate');
         const myUserLocation = document.getElementById('myUserLocation');
@@ -1561,13 +2213,17 @@
         const btnFindUnlinkedUsers = document.getElementById('btnFindUnlinkedUsers');
         const btnRefreshUsers = document.getElementById('btnRefreshUsers');
         const unificationList = document.getElementById('unificationList');
+        const areasTableBody = document.getElementById('areas-table-body');
 
-        // Nuevas referencias para la pestaña de edición
+        // Referencias para la pestaña de edición
         const userToEditSelect = document.getElementById('userToEdit');
         const editUserForm = document.getElementById('editUserForm');
         const editUserId = document.getElementById('editUserId');
-        const editUserName = document.getElementById('editUserName');
+        const editUserNombre = document.getElementById('editUserNombre');
+        const editUserApellidoPaterno = document.getElementById('editUserApellidoPaterno');
+        const editUserApellidoMaterno = document.getElementById('editUserApellidoMaterno');
         const editUserEmail = document.getElementById('editUserEmail');
+        const editUserArea = document.getElementById('editUserArea');
         const editUserStatus = document.getElementById('editUserStatus');
         const editUserRole = document.getElementById('editUserRole');
         const editUserLocation = document.getElementById('editUserLocation');
@@ -1575,15 +2231,84 @@
         const btnDeleteUser = document.getElementById('btnDeleteUser');
         const currentUserStatus = document.getElementById('currentUserStatus');
 
+        // Referencias para agregar usuario
+        const newUserNombre = document.getElementById('newUserNombre');
+        const newUserApellidoPaterno = document.getElementById('newUserApellidoPaterno');
+        const newUserApellidoMaterno = document.getElementById('newUserApellidoMaterno');
+        const newUserEmail = document.getElementById('newUserEmail');
+        const newUserArea = document.getElementById('newUserArea');
+        const newUserPassword = document.getElementById('newUserPassword');
+        const newUserStatus = document.getElementById('newUserStatus');
+        const newUserRole = document.getElementById('newUserRole');
+
+        // Nuevas referencias para gestión de proyectos
+        const projectsTableBody = document.getElementById('projects-table-body');
+        const projectDetailsSection = document.getElementById('project-details-section');
+        const projectDetailsTitle = document.getElementById('project-details-title');
+        const detailProjectName = document.getElementById('detail-project-name');
+        const detailProjectLeader = document.getElementById('detail-project-leader');
+        const detailProjectStatus = document.getElementById('detail-project-status');
+        const detailProjectBudget = document.getElementById('detail-project-budget');
+        const detailProjectStart = document.getElementById('detail-project-start');
+        const detailProjectEnd = document.getElementById('detail-project-end');
+        const detailProjectDescription = document.getElementById('detail-project-description');
+        const detailProjectParticipants = document.getElementById('detail-project-participants');
+        const summaryIncome = document.getElementById('summary-income');
+        const summaryExpense = document.getElementById('summary-expense');
+        const summaryBalance = document.getElementById('summary-balance');
+        const transactionsTableBody = document.getElementById('transactions-table-body');
+        const transactionType = document.getElementById('transactionType');
+        const transactionCategory = document.getElementById('transactionCategory');
+        const btnNewProject = document.getElementById('btnNewProject');
+        const btnAddTransaction = document.getElementById('btnAddTransaction');
+        const btnPdfProject = document.getElementById('btn-pdf-project');
+        const btnExcelProject = document.getElementById('btn-excel-project');
+        const btnCloseProject = document.getElementById('btn-close-project');
+        
+        // Modales de proyectos y transacciones
+        const projectModal = document.getElementById('projectModal');
+        const projectModalTitle = document.getElementById('projectModalTitle');
+        const projectForm = document.getElementById('projectForm');
+        const editProjectId = document.getElementById('editProjectId');
+        const projectName = document.getElementById('projectName');
+        const projectDescription = document.getElementById('projectDescription');
+        const projectLeader = document.getElementById('projectLeader');
+        const projectBudget = document.getElementById('projectBudget');
+        const projectStartDate = document.getElementById('projectStartDate');
+        const projectEndDate = document.getElementById('projectEndDate');
+        const projectParticipants = document.getElementById('projectParticipants');
+        const btnCancelProject = document.getElementById('btnCancelProject');
+        
+        const transactionModal = document.getElementById('transactionModal');
+        const transactionModalTitle = document.getElementById('transactionModalTitle');
+        const transactionForm = document.getElementById('transactionForm');
+        const editTransactionId = document.getElementById('editTransactionId');
+        const transactionProjectId = document.getElementById('transactionProjectId');
+        const transactionTypeSelect = document.getElementById('transactionTypeSelect');
+        const transactionCategorySelect = document.getElementById('transactionCategorySelect');
+        const newCategoryGroup = document.getElementById('newCategoryGroup');
+        const newCategoryName = document.getElementById('newCategoryName');
+        const transactionDescription = document.getElementById('transactionDescription');
+        const transactionAmount = document.getElementById('transactionAmount');
+        const transactionDate = document.getElementById('transactionDate');
+        const btnCancelTransaction = document.getElementById('btnCancelTransaction');
+
         // Variables de estado
-        let isLoginMode = true;
         let currentUser = null;
         let currentUserRole = null;
+        let currentUserArea = null;
         let selectedUserId = null;
         let allUsers = [];
         let allMovements = [];
         let authUsers = [];
         let firestoreUsers = [];
+        let areas = [];
+        let currentProjectId = null;
+        let allProjects = [];
+        let projectTransactions = [];
+        let projectCategories = [];
+        let allUsersForProjects = [];
+        let isLoginMode = true; // Variable faltante agregada
 
         // Establecer fecha actual por defecto
         const today = new Date();
@@ -1595,11 +2320,11 @@
         const estados = {
             oficina: { texto: 'Oficina', clase: 'status-oficina', color: '#4CAF50' },
             muestreo: { texto: 'Muestreo', clase: 'status-muestreo', color: '#FF9800' },
-            salidaSR: { texto: 'Salida S/R', clase: 'status-salidaSR', color: '#F44336' },
+            salidaSR: { texto: 'Salida Int.', clase: 'status-salidaSR', color: '#F44336' },
             salidaCR: { texto: 'Salida C/R', clase: 'status-salidaCR', color: '#5C6BC0' },
             descanso: { texto: 'Descanso', clase: 'status-descanso', color: '#9C27B0' },
             vacaciones: { texto: 'Vacaciones', clase: 'status-vacaciones', color: '#009688' },
-            vacacionesTxt: { texto: 'Vacaciones TxT', clase: 'status-vacacionesTxt', color: '#795548' },
+            vacacionesTxt: { texto: 'Permiso TxT', clase: 'status-vacacionesTxt', color: '#795548' },
             salida: { texto: 'Salida', clase: 'status-salida', color: '#607D8B' }
         };
 
@@ -1609,6 +2334,21 @@
             usuario: { texto: 'Usuario', clase: 'role-user' }
         };
 
+        // Áreas predefinidas
+        const areasPredefinidas = {
+            muestreo: { nombre: 'Muestreo', color: '#FF9800', clase: 'area-muestreo' },
+            rrhh: { nombre: 'RRHH', color: '#9C27B0', clase: 'area-rrhh' },
+            administracion: { nombre: 'Administración', color: '#2196F3', clase: 'area-administracion' },
+            direccion: { nombre: 'Dirección', color: '#F44336', clase: 'area-direccion' }
+        };
+
+        // Estados de proyectos
+        const projectStatuses = {
+            active: { texto: 'Activo', clase: 'status-active' },
+            completed: { texto: 'Completado', clase: 'status-completed' },
+            cancelled: { texto: 'Cancelado', clase: 'status-cancelled' }
+        };
+
         // Inicializar la aplicación
         function init() {
             // Mostrar el modal de login al cargar
@@ -1616,6 +2356,9 @@
 
             // Configurar event listeners
             setupEventListeners();
+
+            // Inicializar áreas
+            inicializarAreas();
 
             // Verificar si hay una sesión activa
             auth.onAuthStateChanged(user => {
@@ -1636,6 +2379,58 @@
             });
         }
 
+        // Inicializar áreas en el sistema
+        function inicializarAreas() {
+            // Verificar si ya existen las áreas en Firestore
+            const areasRef = db.collection("areas");
+            
+            // Crear áreas predefinidas si no existen
+            Object.keys(areasPredefinidas).forEach(key => {
+                areasRef.doc(key).get().then(doc => {
+                    if (!doc.exists) {
+                        areasRef.doc(key).set({
+                            nombre: areasPredefinidas[key].nombre,
+                            color: areasPredefinidas[key].color,
+                            clase: areasPredefinidas[key].clase,
+                            fechaCreacion: new Date()
+                        });
+                    }
+                });
+            });
+            
+            // Cargar áreas para los selectores
+            cargarAreasParaSelectores();
+        }
+
+        // Cargar áreas en los selectores
+        function cargarAreasParaSelectores() {
+            db.collection("areas").get().then(querySnapshot => {
+                areas = [];
+                querySnapshot.forEach(doc => {
+                    areas.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Actualizar selectores de área
+                actualizarSelectoresArea();
+            });
+        }
+
+        // Actualizar todos los selectores de área en la interfaz
+        function actualizarSelectoresArea() {
+            // Selector de filtro por área
+            areaFilter.innerHTML = '<option value="todos">Todas las áreas</option>';
+            cardsAreaFilter.innerHTML = '<option value="todos">Todas las áreas</option>';
+            newUserArea.innerHTML = '<option value="">Seleccione un área</option>';
+            editUserArea.innerHTML = '<option value="">Seleccione un área</option>';
+            
+            areas.forEach(area => {
+                areaFilter.innerHTML += `<option value="${area.id}">${area.nombre}</option>`;
+                cardsAreaFilter.innerHTML += `<option value="${area.id}">${area.nombre}</option>`;
+                newUserArea.innerHTML += `<option value="${area.id}">${area.nombre}</option>`;
+                editUserArea.innerHTML += `<option value="${area.id}">${area.nombre}</option>`;
+            });
+        }
+
         // Obtener información del usuario desde Firestore
         function obtenerInformacionUsuario(userId) {
             db.collection("usuarios").doc(userId).get()
@@ -1643,10 +2438,20 @@
                     if (doc.exists) {
                         const userData = doc.data();
                         currentUserRole = userData.rol || 'usuario';
+                        currentUserArea = userData.area || null;
                         
                         // Actualizar UI con el rol
                         userRoleBadge.textContent = roles[currentUserRole].texto;
                         userRoleBadge.className = `user-role ${roles[currentUserRole].clase}`;
+                        
+                        // Actualizar UI con el área si existe
+                        if (currentUserArea && areasPredefinidas[currentUserArea]) {
+                            userAreaBadge.textContent = areasPredefinidas[currentUserArea].nombre;
+                            userAreaBadge.className = `area-badge ${areasPredefinidas[currentUserArea].clase}`;
+                            userAreaBadge.style.display = 'inline-block';
+                        } else {
+                            userAreaBadge.style.display = 'none';
+                        }
                         
                         // Mostrar la vista correspondiente según el rol
                         if (currentUserRole === 'administrador') {
@@ -1654,7 +2459,9 @@
                             adminView.style.display = 'block';
                             cargarUsuarios();
                             cargarUsuariosParaEdicion();
+                            cargarAreas();
                             aplicarColoresAEstado();
+                            loadProjects();
                         } else {
                             userView.style.display = 'block';
                             adminView.style.display = 'none';
@@ -1679,8 +2486,17 @@
                         const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
                         
                         // Actualizar la interfaz con los datos del usuario
-                        myUserName.textContent = usuario.nombre || 'N/A';
+                        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
+                        myUserName.textContent = nombreCompleto || 'N/A';
                         myUserEmail.textContent = usuario.email || 'N/A';
+                        
+                        // Mostrar área si existe
+                        if (usuario.area && areasPredefinidas[usuario.area]) {
+                            myUserArea.innerHTML = `<span class="area-badge ${areasPredefinidas[usuario.area].clase}">${areasPredefinidas[usuario.area].nombre}</span>`;
+                        } else {
+                            myUserArea.textContent = 'No asignada';
+                        }
+                        
                         myUserStatus.innerHTML = `<span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span>`;
                         myUserLastUpdate.textContent = fecha.toLocaleString();
                         myUserLocation.textContent = usuario.ubicacion || 'No registrada';
@@ -1742,6 +2558,16 @@
                         if (tabId === 'edit-user') {
                             cargarUsuariosParaEdicion();
                         }
+                        
+                        // Si es la pestaña de áreas, cargar las áreas
+                        if (tabId === 'areas') {
+                            cargarAreas();
+                        }
+                        
+                        // Si es la pestaña de proyectos, cargar los proyectos
+                        if (tabId === 'projects') {
+                            loadProjects();
+                        }
                     });
                 });
             }
@@ -1778,7 +2604,7 @@
                 });
             });
 
-            // Nueva pestaña de unificación
+            // Pestaña de unificación
             if (btnFindUnlinkedUsers) {
                 btnFindUnlinkedUsers.addEventListener('click', findUnlinkedUsers);
             }
@@ -1787,7 +2613,7 @@
                 btnRefreshUsers.addEventListener('click', refreshUnificationList);
             }
             
-            // Nueva pestaña de edición
+            // Pestaña de edición
             if (userToEditSelect) {
                 userToEditSelect.addEventListener('change', cargarDatosUsuario);
             }
@@ -1803,6 +2629,79 @@
             // Aplicar colores al selector de estado cuando cambie
             if (editUserStatus) {
                 editUserStatus.addEventListener('change', actualizarColorEstado);
+            }
+            
+            // Filtro por área
+            if (areaFilter) {
+                areaFilter.addEventListener('change', cargarUsuarios);
+            }
+            
+            // Configurar event listeners para proyectos
+            setupProjectEventListeners();
+        }
+
+        // Configurar event listeners para proyectos
+        function setupProjectEventListeners() {
+            // Pestaña de proyectos
+            if (btnNewProject) {
+                btnNewProject.addEventListener('click', showProjectModal);
+            }
+            
+            if (btnAddTransaction) {
+                btnAddTransaction.addEventListener('click', showTransactionModal);
+            }
+            
+            if (btnPdfProject) {
+                btnPdfProject.addEventListener('click', () => generarPDF('proyecto'));
+            }
+            
+            if (btnExcelProject) {
+                btnExcelProject.addEventListener('click', () => generarExcel('proyecto'));
+            }
+            
+            if (btnCloseProject) {
+                btnCloseProject.addEventListener('click', closeProject);
+            }
+            
+            // Modales
+            if (projectForm) {
+                projectForm.addEventListener('submit', saveProject);
+            }
+            
+            if (btnCancelProject) {
+                btnCancelProject.addEventListener('click', () => {
+                    projectModal.style.display = 'none';
+                });
+            }
+            
+            if (transactionForm) {
+                transactionForm.addEventListener('submit', saveTransaction);
+            }
+            
+            if (btnCancelTransaction) {
+                btnCancelTransaction.addEventListener('click', () => {
+                    transactionModal.style.display = 'none';
+                });
+            }
+            
+            // Filtros de transacciones
+            if (transactionType) {
+                transactionType.addEventListener('change', loadProjectTransactions);
+            }
+            
+            if (transactionCategory) {
+                transactionCategory.addEventListener('change', loadProjectTransactions);
+            }
+            
+            // Manejo de nueva categoría
+            if (transactionCategorySelect) {
+                transactionCategorySelect.addEventListener('change', function() {
+                    if (this.value === 'new') {
+                        newCategoryGroup.style.display = 'block';
+                    } else {
+                        newCategoryGroup.style.display = 'none';
+                    }
+                });
             }
         }
 
@@ -1883,7 +2782,7 @@
         }
 
         // Registrar información del usuario en el sistema
-        function registrarUsuarioEnSistema(user, userRole = 'usuario') {
+        function registrarUsuarioEnSistema(user, userRole = 'usuario', userArea = null) {
             // Verificar si el usuario ya existe en la colección de usuarios
             db.collection("usuarios").doc(user.uid).get()
                 .then(doc => {
@@ -1894,6 +2793,7 @@
                             email: user.email,
                             estado: "oficina",
                             rol: userRole,
+                            area: userArea,
                             ultimaActualizacion: new Date(),
                             userId: user.uid
                         };
@@ -2034,43 +2934,59 @@
         function agregarUsuario(e) {
             e.preventDefault();
 
-            const nombre = document.getElementById('newUserName').value;
-            const email = document.getElementById('newUserEmail').value;
-            const estado = document.getElementById('newUserStatus').value;
-            const rol = document.getElementById('newUserRole').value;
+            const nombre = newUserNombre.value;
+            const apellidoPaterno = newUserApellidoPaterno.value;
+            const apellidoMaterno = newUserApellidoMaterno.value;
+            const email = newUserEmail.value;
+            const area = newUserArea.value;
+            const password = newUserPassword.value;
+            const estado = newUserStatus.value;
+            const rol = newUserRole.value;
 
-            // Crear un ID único para el usuario
-            const userId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            // Crear usuario en Authentication
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    // Crear registro en Firestore
+                    db.collection("usuarios").doc(user.uid).set({
+                        nombre: nombre,
+                        apellidoPaterno: apellidoPaterno,
+                        apellidoMaterno: apellidoMaterno,
+                        email: email,
+                        area: area,
+                        estado: estado,
+                        rol: rol,
+                        ultimaActualizacion: new Date(),
+                        userId: user.uid
+                    })
+                    .then(() => {
+                        addUserMessage.textContent = 'Usuario agregado correctamente';
+                        addUserMessage.classList.remove('error-message');
+                        addUserMessage.classList.add('success-message');
+                        addUserForm.reset();
 
-            db.collection("usuarios").doc(userId).set({
-                nombre: nombre,
-                email: email,
-                estado: estado,
-                rol: rol,
-                ultimaActualizacion: new Date(),
-                userId: userId
-            })
-                .then(() => {
-                    addUserMessage.textContent = 'Usuario agregado correctamente';
-                    addUserMessage.classList.remove('error-message');
-                    addUserMessage.classList.add('success-message');
-                    addUserForm.reset();
+                        // Registrar el movimiento en el historial
+                        registrarMovimiento(user.uid, null, estado, "Creación de usuario", currentUser.uid);
 
-                    // Registrar el movimiento en el historial
-                    registrarMovimiento(userId, null, estado, "Creación de usuario", currentUser.uid);
+                        // Ocultar mensaje después de 3 segundos
+                        setTimeout(() => {
+                            addUserMessage.textContent = '';
+                        }, 3000);
 
-                    // Ocultar mensaje después de 3 segundos
-                    setTimeout(() => {
-                        addUserMessage.textContent = '';
-                    }, 3000);
-
-                    // Recargar la tabla
-                    cargarUsuarios();
-                    cargarUsuariosParaRecuadros();
-                    cargarUsuariosParaEdicion();
+                        // Recargar la tabla
+                        cargarUsuarios();
+                        cargarUsuariosParaRecuadros();
+                        cargarUsuariosParaEdicion();
+                    })
+                    .catch(error => {
+                        addUserMessage.textContent = 'Error al agregar usuario en Firestore: ' + error.message;
+                        addUserMessage.classList.remove('success-message');
+                        addUserMessage.classList.add('error-message');
+                    });
                 })
                 .catch(error => {
-                    addUserMessage.textContent = 'Error al agregar usuario: ' + error.message;
+                    addUserMessage.textContent = 'Error al crear usuario en Authentication: ' + error.message;
                     addUserMessage.classList.remove('success-message');
                     addUserMessage.classList.add('error-message');
                 });
@@ -2110,15 +3026,23 @@
         function cargarUsuarios() {
             if (currentUserRole !== 'administrador') return;
             
-            tableBody.innerHTML = '<tr><td colspan="7" class="loading">Cargando datos...</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="8" class="loading">Cargando datos...</td></tr>';
 
-            db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre").get()
+            let query = db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre");
+            
+            // Aplicar filtro por área si está seleccionado
+            const areaSeleccionada = areaFilter.value;
+            if (areaSeleccionada !== 'todos') {
+                query = query.where("area", "==", areaSeleccionada);
+            }
+
+            query.get()
                 .then((querySnapshot) => {
                     tableBody.innerHTML = '';
                     allUsers = [];
 
                     if (querySnapshot.empty) {
-                        tableBody.innerHTML = '<tr><td colspan="7">No hay usuarios registrados</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="8">No hay usuarios registrados</td></tr>';
                         return;
                     }
 
@@ -2128,12 +3052,12 @@
                         allUsers.push(usuario);
 
                         const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
+                        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
 
                         const fila = document.createElement('tr');
                         fila.innerHTML = `
-                            <td>${usuario.nombre || 'N/A'}</td>
+                            <td>${nombreCompleto || 'N/A'}</td>
                             <td>${usuario.email || 'N/A'}</td>
-                            <td><span class="user-role ${roles[usuario.rol]?.clase || 'role-user'}">${roles[usuario.rol]?.texto || 'Usuario'}</span></td>
                             <td><span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span></td>
                             <td>${fecha.toLocaleString()}</td>
                             <td>${usuario.ubicacion || 'No registrada'}</td>
@@ -2142,11 +3066,11 @@
                                     <option value="">Cambiar estado</option>
                                     <option value="oficina">Oficina</option>
                                     <option value="muestreo">Muestreo</option>
-                                    <option value="salidaSR">Salida Sin Regreso</option>
+                                    <option value="salidaSR">Salida Intermitente</option>
                                     <option value="salidaCR">Salida con regreso</option>
                                     <option value="descanso">Descanso</option>
                                     <option value="vacaciones">Vacaciones</option>
-                                    <option value="vacacionesTxt">Vacaciones TxT</option>
+                                    <option value="vacacionesTxt">Permiso TxT</option>
                                     <option value="salida">Salida</option>
                                 </select>
                             </td>
@@ -2170,7 +3094,7 @@
                 })
                 .catch((error) => {
                     console.error("Error al cargar usuarios: ", error);
-                    tableBody.innerHTML = '<tr><td colspan="7">Error al cargar los datos</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="8">Error al cargar los datos</td></tr>';
                 });
         }
 
@@ -2181,8 +3105,16 @@
             userCards.innerHTML = '<div class="loading">Cargando usuarios...</div>';
 
             const filtroEstado = cardsFilter.value;
+            const filtroArea = cardsAreaFilter.value;
 
-            db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre").get()
+            let query = db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre");
+            
+            // Aplicar filtro por área si está seleccionado
+            if (filtroArea !== 'todos') {
+                query = query.where("area", "==", filtroArea);
+            }
+
+            query.get()
                 .then((querySnapshot) => {
                     userCards.innerHTML = '';
                     if (querySnapshot.empty) {
@@ -2199,15 +3131,15 @@
                         }
 
                         const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
+                        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
 
                         const card = document.createElement('div');
                         card.className = 'user-card';
                         card.setAttribute('data-userid', doc.id);
                         card.innerHTML = `
                         <br>
-                        <h3>${usuario.nombre || 'N/A'}</h3>
+                        <h3>${nombreCompleto || 'N/A'}</h3>
                             <p>${usuario.email || 'N/A'}</p>
-                            <p><span class="user-role ${roles[usuario.rol]?.clase || 'role-user'}">${roles[usuario.rol]?.texto || 'Usuario'}</span></p>
                             <p><small>Actualizado: ${fecha.toLocaleString()}</small></p>
                             ${usuario.ubicacion ? `<p class="location-info">📍 ${usuario.ubicacion}</p>` : ''}
                             <span class="status ${estados[usuario.estado]?.clase || 'status-muestreo'}">${estados[usuario.estado]?.texto || 'Muestreo'}</span>
@@ -2224,7 +3156,7 @@
 
                             // Mostrar opciones de estado
                             selectedUserId = this.getAttribute('data-userid');
-                            selectedUserName.textContent = usuario.nombre;
+                            selectedUserName.textContent = nombreCompleto;
                             statusOptions.classList.add('active');
                         });
 
@@ -2233,7 +3165,7 @@
 
                     // Ocultar opciones de estado si no hay tarjetas
                     if (userCards.children.length === 0) {
-                        userCards.innerHTML = '<div class="loading">No hay usuarios con el estado seleccionado</div>';
+                        userCards.innerHTML = '<div class="loading">No hay usuarios con los filtros seleccionados</div>';
                         statusOptions.classList.remove('active');
                     } else {
                         statusOptions.classList.remove('active');
@@ -2253,9 +3185,10 @@
                 .then((querySnapshot) => {
                     querySnapshot.forEach((doc) => {
                         const usuario = doc.data();
+                        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
                         const option = document.createElement('option');
                         option.value = doc.id;
-                        option.textContent = `${usuario.nombre} (${usuario.email})`;
+                        option.textContent = `${nombreCompleto} (${usuario.email})`;
                         userToEditSelect.appendChild(option);
                     });
                 })
@@ -2280,8 +3213,11 @@
                         
                         // Llenar el formulario con los datos del usuario
                         editUserId.value = userId;
-                        editUserName.value = usuario.nombre || '';
+                        editUserNombre.value = usuario.nombre || '';
+                        editUserApellidoPaterno.value = usuario.apellidoPaterno || '';
+                        editUserApellidoMaterno.value = usuario.apellidoMaterno || '';
                         editUserEmail.value = usuario.email || '';
+                        editUserArea.value = usuario.area || '';
                         editUserStatus.value = usuario.estado || 'oficina';
                         editUserRole.value = usuario.rol || 'usuario';
                         editUserLocation.value = usuario.ubicacion || '';
@@ -2314,8 +3250,11 @@
             e.preventDefault();
             
             const userId = editUserId.value;
-            const nombre = editUserName.value;
+            const nombre = editUserNombre.value;
+            const apellidoPaterno = editUserApellidoPaterno.value;
+            const apellidoMaterno = editUserApellidoMaterno.value;
             const email = editUserEmail.value;
+            const area = editUserArea.value;
             const estado = editUserStatus.value;
             const rol = editUserRole.value;
             const ubicacion = editUserLocation.value;
@@ -2323,7 +3262,10 @@
             // Actualizar usuario en Firestore
             db.collection("usuarios").doc(userId).update({
                 nombre: nombre,
+                apellidoPaterno: apellidoPaterno,
+                apellidoMaterno: apellidoMaterno,
                 email: email,
+                area: area,
                 estado: estado,
                 rol: rol,
                 ubicacion: ubicacion,
@@ -2357,7 +3299,7 @@
         // Eliminar usuario
         function eliminarUsuario() {
             const userId = editUserId.value;
-            const nombre = editUserName.value;
+            const nombre = editUserNombre.value;
             
             if (!userId || !confirm(`¿Está seguro de que desea eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) {
                 return;
@@ -2395,6 +3337,52 @@
                 editUserMessage.classList.remove('success-message');
                 editUserMessage.classList.add('error-message');
             });
+        }
+
+        // Cargar áreas para mostrar en la pestaña de gestión
+        function cargarAreas() {
+            areasTableBody.innerHTML = '<tr><td colspan="4" class="loading">Cargando áreas...</td></tr>';
+            
+            db.collection("areas").get()
+                .then((querySnapshot) => {
+                    areasTableBody.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        areasTableBody.innerHTML = '<tr><td colspan="4">No hay áreas registradas</td></tr>';
+                        return;
+                    }
+                    
+                    querySnapshot.forEach((doc) => {
+                        const area = doc.data();
+                        area.id = doc.id;
+                        
+                        // Contar usuarios en esta área
+                        db.collection("usuarios").where("area", "==", doc.id).get()
+                            .then((userSnapshot) => {
+                                const numUsuarios = userSnapshot.size;
+                                
+                                const fila = document.createElement('tr');
+                                fila.innerHTML = `
+                                    <td>${area.nombre}</td>
+                                    <td>
+                                        <span class="area-color" style="background-color: ${area.color};"></span>
+                                        ${area.color}
+                                    </td>
+                                    <td>${numUsuarios}</td>
+                                    <td>
+                                        <button class="btn btn-primary" onclick="editarArea('${doc.id}')">Editar</button>
+                                        <button class="btn btn-danger" onclick="eliminarArea('${doc.id}')">Eliminar</button>
+                                    </td>
+                                `;
+                                
+                                areasTableBody.appendChild(fila);
+                            });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al cargar áreas: ", error);
+                    areasTableBody.innerHTML = '<tr><td colspan="4">Error al cargar las áreas</td></tr>';
+                });
         }
 
         // Cambiar estado de un usuario
@@ -2591,17 +3579,81 @@
                 const nombre = prompt("Ingrese el nombre para este usuario:", email.split('@')[0]);
                 if (!nombre) return;
                 
+                const apellidoPaterno = prompt("Ingrese el apellido paterno:", "");
+                if (!apellidoPaterno) return;
+                
+                const apellidoMaterno = prompt("Ingrese el apellido materno:", "");
+                
                 const rol = confirm("¿Es este usuario un administrador?") ? "administrador" : "usuario";
                 
-                await db.collection("usuarios").doc(uid).set({
-                    nombre: nombre,
-                    email: email,
-                    estado: "oficina",
-                    rol: rol,
-                    userId: uid,
-                    ultimaActualizacion: new Date(),
-                    ubicacion: "No registrada"
-                });
+                // Mostrar selector de área
+                let areaSeleccionada = "";
+                if (areas.length > 0) {
+                    const areaOptions = areas.map(a => `<option value="${a.id}">${a.nombre}</option>`).join('');
+                    const areaHtml = `
+                        <label for="areaSelect">Seleccione un área:</label>
+                        <select id="areaSelect">${areaOptions}</select>
+                    `;
+                    
+                    // Crear un modal simple para seleccionar área
+                    const areaModal = document.createElement('div');
+                    areaModal.className = 'modal';
+                    areaModal.style.display = 'flex';
+                    areaModal.innerHTML = `
+                        <div class="modal-content">
+                            <h2>Seleccionar Área</h2>
+                            ${areaHtml}
+                            <div class="form-actions">
+                                <button id="cancelArea" class="btn btn-danger">Cancelar</button>
+                                <button id="confirmArea" class="btn btn-primary">Confirmar</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(areaModal);
+                    
+                    return new Promise((resolve) => {
+                        document.getElementById('confirmArea').addEventListener('click', () => {
+                            areaSeleccionada = document.getElementById('areaSelect').value;
+                            document.body.removeChild(areaModal);
+                            resolve();
+                        });
+                        
+                        document.getElementById('cancelArea').addEventListener('click', () => {
+                            document.body.removeChild(areaModal);
+                            resolve();
+                        });
+                    }).then(() => {
+                        if (!areaSeleccionada) return;
+                        
+                        // Crear el usuario en Firestore
+                        return db.collection("usuarios").doc(uid).set({
+                            nombre: nombre,
+                            apellidoPaterno: apellidoPaterno,
+                            apellidoMaterno: apellidoMaterno,
+                            email: email,
+                            area: areaSeleccionada,
+                            estado: "oficina",
+                            rol: rol,
+                            userId: uid,
+                            ultimaActualizacion: new Date(),
+                            ubicacion: "No registrada"
+                        });
+                    });
+                } else {
+                    // Si no hay áreas, crear usuario sin área
+                    await db.collection("usuarios").doc(uid).set({
+                        nombre: nombre,
+                        apellidoPaterno: apellidoPaterno,
+                        apellidoMaterno: apellidoMaterno,
+                        email: email,
+                        estado: "oficina",
+                        rol: rol,
+                        userId: uid,
+                        ultimaActualizacion: new Date(),
+                        ubicacion: "No registrada"
+                    });
+                }
                 
                 alert("Usuario creado exitosamente en Firestore");
                 refreshUnificationList();
@@ -2649,7 +3701,7 @@
         function cargarMovimientos() {
             if (currentUserRole !== 'administrador') return;
             
-            movementsTableBody.innerHTML = '<tr><td colspan="6" class="loading">Cargando movimientos...</td></tr>';
+            movementsTableBody.innerHTML = '<tr><td colspan="7" class="loading">Cargando movimientos...</td></tr>';
 
             const startDate = movementStartDate.valueAsDate;
             const endDate = movementEndDate.valueAsDate;
@@ -2668,7 +3720,7 @@
                     allMovements = []; // Limpiar movimientos anteriores
 
                     if (querySnapshot.empty) {
-                        movementsTableBody.innerHTML = '<tr><td colspan="6">No hay movimientos para los filtros seleccionados</td></tr>';
+                        movementsTableBody.innerHTML = '<tr><td colspan="7">No hay movimientos para los filtros seleccionados</td></tr>';
                         return;
                     }
 
@@ -2689,7 +3741,8 @@
                             db.collection("usuarios").doc(userId).get()
                                 .then(userDoc => ({
                                     id: userId,
-                                    name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido"
+                                    name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido",
+                                    area: userDoc.exists ? userDoc.data().area : null
                                 }))
                         )
                     );
@@ -2702,7 +3755,7 @@
 
                         querySnapshot.forEach((doc) => {
                             const movimiento = doc.data();
-                            const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
+                            const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido", area: null };
 
                             if (userInfo.name != "Usuario") {
                                 if (!movimientosPorUsuario[userInfo.name]) {
@@ -2719,6 +3772,7 @@
                                     fecha: fecha,
                                     responsable: responsableInfo.name,
                                     ubicacion: movimiento.ubicacion || "No registrada",
+                                    area: userInfo.area,
                                     docId: doc.id
                                 });
                             }
@@ -2732,7 +3786,7 @@
                             const userRow = document.createElement('tr');
                             userRow.className = 'user-header';
                             userRow.innerHTML = `
-                        <td colspan="6">
+                        <td colspan="7">
                             <span class="toggle-icon">▶</span>
                             ${userName} 
                             <span class="movement-count">(${movimientos.length} movimiento${movimientos.length !== 1 ? 's' : ''})</span>
@@ -2745,7 +3799,7 @@
                             const detallesContainer = document.createElement('tr');
                             detallesContainer.className = 'user-details';
                             const detallesCell = document.createElement('td');
-                            detallesCell.colSpan = 6;
+                            detallesCell.colSpan = 7;
 
                             const tablaDetalles = document.createElement('table');
                             tablaDetalles.className = 'movement-details';
@@ -2799,7 +3853,7 @@
                 })
                 .catch((error) => {
                     console.error("Error al cargar movimientos: ", error);
-                    movementsTableBody.innerHTML = '<tr><td colspan="6">Error al cargar los movimientos</td></tr>';
+                    movementsTableBody.innerHTML = '<tr><td colspan="7">Error al cargar los movimientos</td></tr>';
                 });
         }
 
@@ -2875,15 +3929,23 @@
                 for (const userId of userIds) {
                     const userDoc = await db.collection("usuarios").doc(userId).get();
                     if (userDoc.exists) {
-                        usersInfo[userId] = userDoc.data().nombre;
+                        const userData = userDoc.data();
+                        usersInfo[userId] = {
+                            nombre: `${userData.nombre || ''} ${userData.apellidoPaterno || ''} ${userData.apellidoMaterno || ''}`.trim(),
+                            area: userData.area
+                        };
                     } else {
-                        usersInfo[userId] = "Usuario desconocido";
+                        usersInfo[userId] = {
+                            nombre: "Usuario desconocido",
+                            area: null
+                        };
                     }
                 }
                 
-                // Agregar nombre de usuario a cada movimiento
+                // Agregar información de usuario a cada movimiento
                 movimientos.forEach(movimiento => {
-                    movimiento.nombreUsuario = usersInfo[movimiento.userId];
+                    movimiento.nombreUsuario = usersInfo[movimiento.userId].nombre;
+                    movimiento.areaUsuario = usersInfo[movimiento.userId].area;
                 });
                 
                 return movimientos;
@@ -3012,10 +4074,22 @@
                 const usersPromise = Promise.all(
                     Array.from(userIds).map(userId =>
                         db.collection("usuarios").doc(userId).get()
-                            .then(userDoc => ({
-                                id: userId,
-                                name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido"
-                            }))
+                            .then(userDoc => {
+                                if (userDoc.exists) {
+                                    const userData = userDoc.data();
+                                    return {
+                                        id: userId,
+                                        name: `${userData.nombre || ''} ${userData.apellidoPaterno || ''} ${userData.apellidoMaterno || ''}`.trim(),
+                                        area: userData.area
+                                    };
+                                } else {
+                                    return {
+                                        id: userId,
+                                        name: "Usuario desconocido",
+                                        area: null
+                                    };
+                                }
+                            })
                     )
                 );
 
@@ -3023,17 +4097,18 @@
                     const usersMap = new Map(users.map(user => [user.id, user]));
 
                     // Preparar datos para el PDF
-                    const headers = [["Usuario", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"]];
+                    const headers = [["Usuario", "Área", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"]];
                     const datos = [];
 
                     allMovements.forEach(movimiento => {
-                        const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
+                        const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido", area: null };
                         const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
                         const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
 
                         if (userInfo.name != "Usuario") {
                             datos.push([
                                 userInfo.name,
+                                userInfo.area && areasPredefinidas[userInfo.area] ? areasPredefinidas[userInfo.area].nombre : 'No asignada',
                                 estados[movimiento.estadoAnterior]?.texto || movimiento.estadoAnterior || 'N/A',
                                 estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo || 'N/A',
                                 fecha.toLocaleString(),
@@ -3055,6 +4130,76 @@
                     // Guardar el PDF
                     doc.save(`reporte_movimientos_${periodo}_${fecha}.pdf`);
                 });
+            } else if (tipo === 'proyecto' && currentProjectId) {
+                // Obtener datos del proyecto
+                const proyectoDoc = await db.collection("proyectos").doc(currentProjectId).get();
+                if (!proyectoDoc.exists) {
+                    alert('Proyecto no encontrado');
+                    return;
+                }
+                
+                const proyecto = proyectoDoc.data();
+                
+                // Título
+                doc.setFontSize(18);
+                doc.text(`Reporte Financiero: ${proyecto.nombre}`, 14, 15);
+                
+                // Información del proyecto
+                doc.setFontSize(12);
+                doc.text(`Estado: ${projectStatuses[proyecto.estado]?.texto || 'Activo'}`, 14, 25);
+                doc.text(`Presupuesto: $${(proyecto.presupuesto || 0).toFixed(2)}`, 14, 32);
+                doc.text(`Fecha de inicio: ${proyecto.fechaInicio ? proyecto.fechaInicio.toDate().toLocaleDateString() : 'N/A'}`, 14, 39);
+                doc.text(`Fecha de fin: ${proyecto.fechaFin ? proyecto.fechaFin.toDate().toLocaleDateString() : 'N/A'}`, 14, 46);
+                
+                // Resumen financiero
+                let totalIngresos = 0;
+                let totalGastos = 0;
+                
+                if (proyecto.transacciones) {
+                    proyecto.transacciones.forEach(transaccion => {
+                        if (transaccion.tipo === 'income') {
+                            totalIngresos += transaccion.monto;
+                        } else if (transaccion.tipo === 'expense') {
+                            totalGastos += transaccion.monto;
+                        }
+                    });
+                }
+                
+                const saldo = totalIngresos - totalGastos;
+                
+                doc.text(`Ingresos: $${totalIngresos.toFixed(2)}`, 14, 58);
+                doc.text(`Gastos: $${totalGastos.toFixed(2)}`, 14, 65);
+                doc.text(`Saldo: $${saldo.toFixed(2)}`, 14, 72);
+                
+                // Tabla de transacciones
+                if (proyecto.transacciones && proyecto.transacciones.length > 0) {
+                    const headers = [["Fecha", "Descripción", "Categoría", "Tipo", "Monto"]];
+                    const datos = [];
+                    
+                    proyecto.transacciones.forEach(transaccion => {
+                        const fecha = transaccion.fecha ? new Date(transaccion.fecha).toLocaleDateString() : 'N/A';
+                        const tipo = transaccion.tipo === 'income' ? 'Ingreso' : 'Gasto';
+                        
+                        datos.push([
+                            fecha,
+                            transaccion.descripcion || 'N/A',
+                            transaccion.categoria || 'Sin categoría',
+                            tipo,
+                            `$${transaccion.monto.toFixed(2)}`
+                        ]);
+                    });
+                    
+                    doc.autoTable({
+                        head: headers,
+                        body: datos,
+                        startY: 80,
+                        styles: { fontSize: 9 },
+                        headStyles: { fillColor: [44, 62, 80] }
+                    });
+                }
+                
+                // Guardar PDF
+                doc.save(`reporte_${proyecto.nombre.replace(/\s+/g, '_')}.pdf`);
             }
         }
 
@@ -3119,10 +4264,22 @@
                 const usersPromise = Promise.all(
                     Array.from(userIds).map(userId =>
                         db.collection("usuarios").doc(userId).get()
-                            .then(userDoc => ({
-                                id: userId,
-                                name: userDoc.exists ? userDoc.data().nombre : "Usuario desconocido"
-                            }))
+                            .then(userDoc => {
+                                if (userDoc.exists) {
+                                    const userData = userDoc.data();
+                                    return {
+                                        id: userId,
+                                        name: `${userData.nombre || ''} ${userData.apellidoPaterno || ''} ${userData.apellidoMaterno || ''}`.trim(),
+                                        area: userData.area
+                                    };
+                                } else {
+                                    return {
+                                        id: userId,
+                                        name: "Usuario desconocido",
+                                        area: null
+                                    };
+                                }
+                            })
                     )
                 );
 
@@ -3131,17 +4288,18 @@
 
                     // Preparar datos para Excel
                     const datos = [];
-                    const headers = ["Usuario", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"];
+                    const headers = ["Usuario", "Área", "Estado Anterior", "Estado Nuevo", "Fecha Cambio", "Ubicación", "Responsable"];
                     datos.push(headers);
 
                     allMovements.forEach(movimiento => {
-                        const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido" };
+                        const userInfo = usersMap.get(movimiento.userId) || { name: "Usuario desconocido", area: null };
                         const responsableInfo = usersMap.get(movimiento.responsableId) || { name: "Usuario desconocido" };
                         const fecha = movimiento.fecha ? movimiento.fecha.toDate() : new Date();
 
                         if (userInfo.name != "Usuario") {
                             datos.push([
                                 userInfo.name,
+                                userInfo.area && areasPredefinidas[userInfo.area] ? areasPredefinidas[userInfo.area].nombre : 'No asignada',
                                 estados[movimiento.estadoAnterior]?.texto || movimiento.estadoAnterior || 'N/A',
                                 estados[movimiento.estadoNuevo]?.texto || movimiento.estadoNuevo || 'N/A',
                                 fecha.toLocaleString(),
@@ -3161,7 +4319,876 @@
                     // Guardar archivo
                     XLSX.writeFile(wb, `reporte_movimientos_${periodo}_${fecha}.xlsx`);
                 });
+            } else if (tipo === 'proyecto' && currentProjectId) {
+                // Obtener datos del proyecto
+                const proyectoDoc = await db.collection("proyectos").doc(currentProjectId).get();
+                if (!proyectoDoc.exists) {
+                    alert('Proyecto no encontrado');
+                    return;
+                }
+                
+                const proyecto = proyectoDoc.data();
+                
+                // Crear libro de trabajo
+                const wb = XLSX.utils.book_new();
+                
+                // Hoja de resumen
+                const summaryData = [
+                    ["Resumen del Proyecto"],
+                    ["Nombre:", proyecto.nombre],
+                    ["Estado:", projectStatuses[proyecto.estado]?.texto || 'Activo'],
+                    ["Presupuesto:", `$${(proyecto.presupuesto || 0).toFixed(2)}`],
+                    ["Fecha de inicio:", proyecto.fechaInicio ? proyecto.fechaInicio.toDate().toLocaleDateString() : 'N/A'],
+                    ["Fecha de fin:", proyecto.fechaFin ? proyecto.fechaFin.toDate().toLocaleDateString() : 'N/A'],
+                    [],
+                    ["Resumen Financiero"],
+                    ["Ingresos:", ""],
+                    ["Gastos:", ""],
+                    ["Saldo:", ""]
+                ];
+                
+                // Calcular totales
+                let totalIngresos = 0;
+                let totalGastos = 0;
+                
+                if (proyecto.transacciones) {
+                    proyecto.transacciones.forEach(transaccion => {
+                        if (transaccion.tipo === 'income') {
+                            totalIngresos += transaccion.monto;
+                        } else if (transaccion.tipo === 'expense') {
+                            totalGastos += transaccion.monto;
+                        }
+                    });
+                }
+                
+                const saldo = totalIngresos - totalGastos;
+                
+                summaryData[8][1] = `$${totalIngresos.toFixed(2)}`;
+                summaryData[9][1] = `$${totalGastos.toFixed(2)}`;
+                summaryData[10][1] = `$${saldo.toFixed(2)}`;
+                
+                const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+                XLSX.utils.book_append_sheet(wb, wsSummary, "Resumen");
+                
+                // Hoja de transacciones
+                if (proyecto.transacciones && proyecto.transacciones.length > 0) {
+                    const transactionData = [["Fecha", "Descripción", "Categoría", "Tipo", "Monto"]];
+                    
+                    proyecto.transacciones.forEach(transaccion => {
+                        const fecha = transaccion.fecha ? new Date(transaccion.fecha).toLocaleDateString() : 'N/A';
+                        const tipo = transaccion.tipo === 'income' ? 'Ingreso' : 'Gasto';
+                        
+                        transactionData.push([
+                            fecha,
+                            transaccion.descripcion || 'N/A',
+                            transaccion.categoria || 'Sin categoría',
+                            tipo,
+                            transaccion.monto
+                        ]);
+                    });
+                    
+                    const wsTransactions = XLSX.utils.aoa_to_sheet(transactionData);
+                    XLSX.utils.book_append_sheet(wb, wsTransactions, "Transacciones");
+                }
+                
+                // Guardar archivo
+                XLSX.writeFile(wb, `reporte_${proyecto.nombre.replace(/\s+/g, '_')}.xlsx`);
             }
+        }
+
+        // Cargar proyectos
+        function loadProjects() {
+            if (currentUserRole !== 'administrador') return;
+            
+            projectsTableBody.innerHTML = '<tr><td colspan="9" class="loading">Cargando proyectos...</td></tr>';
+
+            db.collection("proyectos").orderBy("fechaCreacion", "desc").get()
+                .then((querySnapshot) => {
+                    projectsTableBody.innerHTML = '';
+                    allProjects = [];
+
+                    if (querySnapshot.empty) {
+                        projectsTableBody.innerHTML = '<tr><td colspan="9">No hay proyectos registrados</td></tr>';
+                        return;
+                    }
+
+                    // Obtener usuarios para mostrar nombres
+                    const usersPromise = db.collection("usuarios").get();
+                    
+                    Promise.all([querySnapshot, usersPromise]).then(([projectsSnapshot, usersSnapshot]) => {
+                        const usersMap = new Map();
+                        usersSnapshot.forEach(doc => {
+                            const userData = doc.data();
+                            usersMap.set(doc.id, userData);
+                        });
+
+                        projectsSnapshot.forEach((doc) => {
+                            const proyecto = doc.data();
+                            proyecto.id = doc.id;
+                            allProjects.push(proyecto);
+
+                            // Obtener información del líder
+                            const leaderInfo = usersMap.get(proyecto.lider) || { nombre: "Desconocido", apellidoPaterno: "" };
+                            const leaderName = `${leaderInfo.nombre || ''} ${leaderInfo.apellidoPaterno || ''}`.trim();
+
+                            // Calcular gastos y saldo
+                            let totalGastos = 0;
+                            let totalIngresos = 0;
+                            
+                            if (proyecto.transacciones) {
+                                proyecto.transacciones.forEach(transaccion => {
+                                    if (transaccion.tipo === 'expense') {
+                                        totalGastos += transaccion.monto;
+                                    } else if (transaccion.tipo === 'income') {
+                                        totalIngresos += transaccion.monto;
+                                    }
+                                });
+                            }
+                            
+                            const saldo = totalIngresos - totalGastos;
+                            const presupuesto = proyecto.presupuesto || 0;
+
+                            const fila = document.createElement('tr');
+                            fila.innerHTML = `
+                                <td>${proyecto.nombre || 'N/A'}</td>
+                                <td>${leaderName || 'N/A'}</td>
+                                <td><span class="project-status ${projectStatuses[proyecto.estado]?.clase || 'status-active'}">${projectStatuses[proyecto.estado]?.texto || 'Activo'}</span></td>
+                                <td>$${presupuesto.toFixed(2)}</td>
+                                <td>$${totalGastos.toFixed(2)}</td>
+                                <td>$${saldo.toFixed(2)}</td>
+                                <td>${proyecto.fechaInicio ? proyecto.fechaInicio.toDate().toLocaleDateString() : 'N/A'}</td>
+                                <td>${proyecto.fechaFin ? proyecto.fechaFin.toDate().toLocaleDateString() : 'N/A'}</td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="viewProject('${doc.id}')">Ver</button>
+                                    <button class="btn btn-secondary" onclick="editProject('${doc.id}')">Editar</button>
+                                    <button class="btn btn-danger" onclick="deleteProject('${doc.id}')">Eliminar</button>
+                                </td>
+                            `;
+
+                            projectsTableBody.appendChild(fila);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al cargar proyectos: ", error);
+                    projectsTableBody.innerHTML = '<tr><td colspan="9">Error al cargar los proyectos</td></tr>';
+                });
+        }
+
+        // Mostrar modal para crear/editar proyecto
+        function showProjectModal(projectId = null) {
+            // Limpiar formulario
+            projectForm.reset();
+            editProjectId.value = '';
+            
+            // Configurar título
+            if (projectId) {
+                projectModalTitle.textContent = 'Editar Proyecto';
+                
+                // Cargar datos del proyecto
+                db.collection("proyectos").doc(projectId).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            const proyecto = doc.data();
+                            editProjectId.value = projectId;
+                            projectName.value = proyecto.nombre || '';
+                            projectDescription.value = proyecto.descripcion || '';
+                            projectLeader.value = proyecto.lider || '';
+                            projectBudget.value = proyecto.presupuesto || 0;
+                            projectStartDate.value = proyecto.fechaInicio ? proyecto.fechaInicio.toDate().toISOString().split('T')[0] : '';
+                            projectEndDate.value = proyecto.fechaFin ? proyecto.fechaFin.toDate().toISOString().split('T')[0] : '';
+                            
+                            // Seleccionar participantes
+                            if (proyecto.participantes) {
+                                Array.from(projectParticipants.options).forEach(option => {
+                                    if (proyecto.participantes.includes(option.value)) {
+                                        option.selected = true;
+                                    }
+                                });
+                            }
+                        }
+                    });
+            } else {
+                projectModalTitle.textContent = 'Nuevo Proyecto';
+                // Establecer fecha de inicio por defecto como hoy
+                const today = new Date();
+                projectStartDate.valueAsDate = today;
+            }
+            
+            // Cargar usuarios para líder y participantes
+            loadUsersForProjects();
+            
+            // Mostrar modal
+            projectModal.style.display = 'flex';
+        }
+
+        // Cargar usuarios para selección en proyectos
+        function loadUsersForProjects() {
+            projectLeader.innerHTML = '<option value="">Seleccione un líder</option>';
+            projectParticipants.innerHTML = '';
+            
+            db.collection("usuarios").where("nombre", "!=", "Usuario").orderBy("nombre").get()
+                .then((querySnapshot) => {
+                    allUsersForProjects = [];
+                    
+                    querySnapshot.forEach((doc) => {
+                        const usuario = doc.data();
+                        usuario.id = doc.id;
+                        allUsersForProjects.push(usuario);
+                        
+                        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
+                        
+                        // Opción para líder
+                        const optionLeader = document.createElement('option');
+                        optionLeader.value = doc.id;
+                        optionLeader.textContent = nombreCompleto;
+                        projectLeader.appendChild(optionLeader);
+                        
+                        // Opción para participantes
+                        const optionParticipant = document.createElement('option');
+                        optionParticipant.value = doc.id;
+                        optionParticipant.textContent = nombreCompleto;
+                        projectParticipants.appendChild(optionParticipant);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al cargar usuarios para proyectos: ", error);
+                });
+        }
+
+        // Guardar proyecto (crear o actualizar) - FUNCIÓN CORREGIDA
+       function saveProject(e) {
+        e.preventDefault();
+        
+        const projectId = editProjectId.value;
+        const nombre = projectName.value;
+        const descripcion = projectDescription.value;
+        const lider = projectLeader.value;
+        const presupuesto = parseFloat(projectBudget.value);
+        const fechaInicio = new Date(projectStartDate.value);
+        const fechaFin = projectEndDate.value ? new Date(projectEndDate.value) : null;
+        
+        // Validaciones básicas
+        if (!nombre || !lider || !presupuesto || !fechaInicio) {
+            alert('Por favor complete todos los campos requeridos');
+            return;
+        }
+        
+        // Obtener participantes seleccionados
+        const participantes = Array.from(projectParticipants.selectedOptions).map(option => option.value);
+        
+        console.log('Datos del proyecto a guardar:', {
+            nombre,
+            descripcion,
+            lider,
+            presupuesto,
+            fechaInicio,
+            fechaFin,
+            participantes
+        });
+        
+        // Crear objeto con datos del proyecto
+        const projectData = {
+            nombre: nombre,
+            descripcion: descripcion || '',
+            lider: lider,
+            presupuesto: presupuesto,
+            fechaInicio: firebase.firestore.Timestamp.fromDate(fechaInicio),
+            participantes: participantes,
+            estado: 'active',
+            fechaActualizacion: firebase.firestore.Timestamp.now(),
+            transacciones: [],
+            categorias: []
+        };
+        
+        // Agregar fechaFin solo si existe
+        if (fechaFin) {
+            projectData.fechaFin = firebase.firestore.Timestamp.fromDate(fechaFin);
+        }
+        
+        // Agregar fechaCreacion solo para nuevos proyectos
+        if (!projectId) {
+            projectData.fechaCreacion = firebase.firestore.Timestamp.now();
+        }
+        
+        console.log('Datos finales del proyecto:', projectData);
+        
+        if (projectId) {
+            // Actualizar proyecto existente
+            console.log('Actualizando proyecto existente:', projectId);
+            db.collection("proyectos").doc(projectId).update(projectData)
+                .then(() => {
+                    console.log('Proyecto actualizado correctamente');
+                    alert('Proyecto actualizado correctamente');
+                    projectModal.style.display = 'none';
+                    loadProjects();
+                    if (currentProjectId === projectId) {
+                        viewProject(projectId);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al actualizar proyecto:", error);
+                    alert('Error al actualizar proyecto: ' + error.message);
+                });
+        } else {
+            // Crear nuevo proyecto
+            console.log('Creando nuevo proyecto...');
+            db.collection("proyectos").add(projectData)
+                .then((docRef) => {
+                    console.log('Proyecto creado correctamente con ID:', docRef.id);
+                    alert('Proyecto creado correctamente');
+                    projectModal.style.display = 'none';
+                    loadProjects();
+                    viewProject(docRef.id);
+                })
+                .catch(error => {
+                    console.error("Error al crear proyecto:", error);
+                    alert('Error al crear proyecto: ' + error.message);
+                    
+                    // Mostrar más detalles del error
+                    if (error.code === 'failed-precondition') {
+                        alert('Error: La colección no existe o no tienes permisos. Verifica la configuración de Firestore.');
+                    } else if (error.code === 'permission-denied') {
+                        alert('Error: No tienes permisos para escribir en Firestore.');
+                    }
+                });
+        }
+    }
+
+    // Función para inicializar proyectos (verificar si la colección existe)
+    function inicializarProyectos() {
+        console.log('Inicializando proyectos...');
+        db.collection("proyectos").limit(1).get()
+            .then((querySnapshot) => {
+                console.log('Colección proyectos existe:', !querySnapshot.empty);
+                if (querySnapshot.empty) {
+                    console.log('La colección proyectos está vacía, se creará el primer proyecto');
+                    // La colección existe pero está vacía, esto es normal
+                }
+            })
+            .catch((error) => {
+                console.error("Error al verificar colección proyectos:", error);
+                if (error.code === 'failed-precondition') {
+                    console.log('La colección proyectos no existe todavía');
+                    // Esto es normal, la colección se creará automáticamente al agregar el primer documento
+                }
+            });
+    }
+
+    // Modificar la función init para inicializar proyectos
+    function init() {
+        // Mostrar el modal de login al cargar
+        loginModal.style.display = 'flex';
+
+        // Configurar event listeners
+        setupEventListeners();
+
+        // Inicializar áreas
+        inicializarAreas();
+        
+        // Inicializar proyectos
+        inicializarProyectos();
+
+        // Verificar si hay una sesión activa
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Usuario autenticado
+                currentUser = user;
+                userEmail.textContent = user.email;
+                loginModal.style.display = 'none';
+                app.style.display = 'block';
+
+                // Obtener información del usuario desde Firestore
+                obtenerInformacionUsuario(user.uid);
+            } else {
+                // No hay usuario autenticado
+                app.style.display = 'none';
+                loginModal.style.display = 'flex';
+            }
+        });
+    }
+
+    // Función mejorada para cargar proyectos con manejo de errores
+    function loadProjects() {
+        if (currentUserRole !== 'administrador') return;
+        
+        projectsTableBody.innerHTML = '<tr><td colspan="9" class="loading">Cargando proyectos...</td></tr>';
+
+        console.log('Cargando proyectos desde Firestore...');
+        
+        db.collection("proyectos").orderBy("fechaCreacion", "desc").get()
+            .then((querySnapshot) => {
+                console.log('Proyectos encontrados:', querySnapshot.size);
+                projectsTableBody.innerHTML = '';
+                allProjects = [];
+
+                if (querySnapshot.empty) {
+                    projectsTableBody.innerHTML = '<tr><td colspan="9">No hay proyectos registrados. <button class="btn btn-primary" onclick="showProjectModal()">Crear primer proyecto</button></td></tr>';
+                    return;
+                }
+
+                // Obtener usuarios para mostrar nombres
+                const usersPromise = db.collection("usuarios").get();
+                
+                Promise.all([querySnapshot, usersPromise]).then(([projectsSnapshot, usersSnapshot]) => {
+                    const usersMap = new Map();
+                    usersSnapshot.forEach(doc => {
+                        const userData = doc.data();
+                        usersMap.set(doc.id, userData);
+                    });
+
+                    projectsSnapshot.forEach((doc) => {
+                        const proyecto = doc.data();
+                        proyecto.id = doc.id;
+                        allProjects.push(proyecto);
+
+                        // Obtener información del líder
+                        const leaderInfo = usersMap.get(proyecto.lider) || { nombre: "Desconocido", apellidoPaterno: "" };
+                        const leaderName = `${leaderInfo.nombre || ''} ${leaderInfo.apellidoPaterno || ''}`.trim();
+
+                        // Calcular gastos y saldo
+                        let totalGastos = 0;
+                        let totalIngresos = 0;
+                        
+                        if (proyecto.transacciones) {
+                            proyecto.transacciones.forEach(transaccion => {
+                                if (transaccion.tipo === 'expense') {
+                                    totalGastos += transaccion.monto;
+                                } else if (transaccion.tipo === 'income') {
+                                    totalIngresos += transaccion.monto;
+                                }
+                            });
+                        }
+                        
+                        const saldo = totalIngresos - totalGastos;
+                        const presupuesto = proyecto.presupuesto || 0;
+
+                        const fila = document.createElement('tr');
+                        fila.innerHTML = `
+                            <td>${proyecto.nombre || 'N/A'}</td>
+                            <td>${leaderName || 'N/A'}</td>
+                            <td><span class="project-status ${projectStatuses[proyecto.estado]?.clase || 'status-active'}">${projectStatuses[proyecto.estado]?.texto || 'Activo'}</span></td>
+                            <td>$${presupuesto.toFixed(2)}</td>
+                            <td>$${totalGastos.toFixed(2)}</td>
+                            <td>$${saldo.toFixed(2)}</td>
+                            <td>${proyecto.fechaInicio ? proyecto.fechaInicio.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>${proyecto.fechaFin ? proyecto.fechaFin.toDate().toLocaleDateString() : 'N/A'}</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="viewProject('${doc.id}')">Ver</button>
+                                <button class="btn btn-secondary" onclick="editProject('${doc.id}')">Editar</button>
+                                <button class="btn btn-danger" onclick="deleteProject('${doc.id}')">Eliminar</button>
+                            </td>
+                        `;
+
+                        projectsTableBody.appendChild(fila);
+                    });
+                });
+            })
+            .catch((error) => {
+                console.error("Error al cargar proyectos: ", error);
+                projectsTableBody.innerHTML = '<tr><td colspan="9">Error al cargar los proyectos: ' + error.message + '</td></tr>';
+                
+                if (error.code === 'permission-denied') {
+                    projectsTableBody.innerHTML = '<tr><td colspan="9">Error de permisos: No tienes acceso a la colección de proyectos. Contacta al administrador.</td></tr>';
+                }
+            });
+    }
+
+        // Ver detalles de un proyecto
+        function viewProject(projectId) {
+            currentProjectId = projectId;
+            
+            db.collection("proyectos").doc(projectId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const proyecto = doc.data();
+                        
+                        // Actualizar información del proyecto
+                        projectDetailsTitle.textContent = `Proyecto: ${proyecto.nombre}`;
+                        detailProjectName.textContent = proyecto.nombre || 'N/A';
+                        detailProjectDescription.textContent = proyecto.descripcion || 'Sin descripción';
+                        detailProjectBudget.textContent = `$${(proyecto.presupuesto || 0).toFixed(2)}`;
+                        detailProjectStart.textContent = proyecto.fechaInicio ? proyecto.fechaInicio.toDate().toLocaleDateString() : 'N/A';
+                        detailProjectEnd.textContent = proyecto.fechaFin ? proyecto.fechaFin.toDate().toLocaleDateString() : 'N/A';
+                        detailProjectStatus.innerHTML = `<span class="project-status ${projectStatuses[proyecto.estado]?.clase || 'status-active'}">${projectStatuses[proyecto.estado]?.texto || 'Activo'}</span>`;
+                        
+                        // Obtener información del líder
+                        db.collection("usuarios").doc(proyecto.lider).get()
+                            .then(leaderDoc => {
+                                if (leaderDoc.exists) {
+                                    const leaderData = leaderDoc.data();
+                                    const leaderName = `${leaderData.nombre || ''} ${leaderData.apellidoPaterno || ''} ${leaderData.apellidoMaterno || ''}`.trim();
+                                    detailProjectLeader.textContent = leaderName;
+                                } else {
+                                    detailProjectLeader.textContent = 'Líder no encontrado';
+                                }
+                            });
+                        
+                        // Mostrar participantes
+                        detailProjectParticipants.innerHTML = '';
+                        if (proyecto.participantes && proyecto.participantes.length > 0) {
+                            // Obtener información de todos los participantes
+                            const participantPromises = proyecto.participantes.map(participantId => 
+                                db.collection("usuarios").doc(participantId).get()
+                            );
+                            
+                            Promise.all(participantPromises).then(participantDocs => {
+                                participantDocs.forEach(participantDoc => {
+                                    if (participantDoc.exists) {
+                                        const participantData = participantDoc.data();
+                                        const participantName = `${participantData.nombre || ''} ${participantData.apellidoPaterno || ''}`.trim();
+                                        
+                                        const badge = document.createElement('span');
+                                        badge.className = 'participant-badge';
+                                        badge.textContent = participantName;
+                                        detailProjectParticipants.appendChild(badge);
+                                    }
+                                });
+                            });
+                        } else {
+                            detailProjectParticipants.innerHTML = '<span>No hay participantes asignados</span>';
+                        }
+                        
+                        // Mostrar sección de detalles
+                        projectDetailsSection.style.display = 'block';
+                        
+                        // Cargar transacciones del proyecto
+                        loadProjectTransactions();
+                        
+                        // Cargar categorías para filtros
+                        loadProjectCategories();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar proyecto:", error);
+                    alert('Error al cargar proyecto: ' + error.message);
+                });
+        }
+
+        // Cargar transacciones del proyecto
+        function loadProjectTransactions() {
+            if (!currentProjectId) return;
+            
+            transactionsTableBody.innerHTML = '<tr><td colspan="6" class="loading">Cargando transacciones...</td></tr>';
+            
+            db.collection("proyectos").doc(currentProjectId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const proyecto = doc.data();
+                        projectTransactions = proyecto.transacciones || [];
+                        
+                        // Aplicar filtros
+                        let filteredTransactions = projectTransactions;
+                        const tipoFiltro = transactionType.value;
+                        const categoriaFiltro = transactionCategory.value;
+                        
+                        if (tipoFiltro !== 'all') {
+                            filteredTransactions = filteredTransactions.filter(t => t.tipo === tipoFiltro);
+                        }
+                        
+                        if (categoriaFiltro !== 'all') {
+                            filteredTransactions = filteredTransactions.filter(t => t.categoria === categoriaFiltro);
+                        }
+                        
+                        // Ordenar por fecha (más reciente primero)
+                        filteredTransactions.sort((a, b) => {
+                            return new Date(b.fecha) - new Date(a.fecha);
+                        });
+                        
+                        // Actualizar tabla
+                        transactionsTableBody.innerHTML = '';
+                        
+                        if (filteredTransactions.length === 0) {
+                            transactionsTableBody.innerHTML = '<tr><td colspan="6">No hay transacciones para los filtros seleccionados</td></tr>';
+                        } else {
+                            // Calcular totales
+                            let totalIngresos = 0;
+                            let totalGastos = 0;
+                            
+                            filteredTransactions.forEach(transaccion => {
+                                if (transaccion.tipo === 'income') {
+                                    totalIngresos += transaccion.monto;
+                                } else if (transaccion.tipo === 'expense') {
+                                    totalGastos += transaccion.monto;
+                                }
+                                
+                                const fecha = transaccion.fecha ? new Date(transaccion.fecha).toLocaleDateString() : 'N/A';
+                                const tipoClase = transaccion.tipo === 'income' ? 'transaction-income' : 'transaction-expense';
+                                const tipoTexto = transaccion.tipo === 'income' ? 'Ingreso' : 'Gasto';
+                                
+                                const fila = document.createElement('tr');
+                                fila.innerHTML = `
+                                    <td>${fecha}</td>
+                                    <td>${transaccion.descripcion || 'N/A'}</td>
+                                    <td><span class="category-badge">${transaccion.categoria || 'Sin categoría'}</span></td>
+                                    <td>${tipoTexto}</td>
+                                    <td class="${tipoClase}">$${transaccion.monto.toFixed(2)}</td>
+                                    <td>
+                                        <button class="btn btn-secondary" onclick="editTransaction('${transaccion.id}')">Editar</button>
+                                        <button class="btn btn-danger" onclick="deleteTransaction('${transaccion.id}')">Eliminar</button>
+                                    </td>
+                                `;
+                                
+                                transactionsTableBody.appendChild(fila);
+                            });
+                            
+                            // Actualizar resumen financiero
+                            const saldo = totalIngresos - totalGastos;
+                            summaryIncome.textContent = `$${totalIngresos.toFixed(2)}`;
+                            summaryExpense.textContent = `$${totalGastos.toFixed(2)}`;
+                            summaryBalance.textContent = `$${saldo.toFixed(2)}`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar transacciones:", error);
+                    transactionsTableBody.innerHTML = '<tr><td colspan="6">Error al cargar las transacciones</td></tr>';
+                });
+        }
+
+        // Cargar categorías para filtros
+        function loadProjectCategories() {
+            if (!currentProjectId) return;
+            
+            db.collection("proyectos").doc(currentProjectId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const proyecto = doc.data();
+                        projectCategories = proyecto.categorias || [];
+                        
+                        // Actualizar selector de categorías
+                        transactionCategory.innerHTML = '<option value="all">Todas</option>';
+                        projectCategories.forEach(categoria => {
+                            const option = document.createElement('option');
+                            option.value = categoria;
+                            option.textContent = categoria;
+                            transactionCategory.appendChild(option);
+                        });
+                        
+                        // Actualizar selector de categorías en el modal de transacciones
+                        transactionCategorySelect.innerHTML = '<option value="">Seleccione categoría</option>';
+                        projectCategories.forEach(categoria => {
+                            const option = document.createElement('option');
+                            option.value = categoria;
+                            option.textContent = categoria;
+                            transactionCategorySelect.appendChild(option);
+                        });
+                        transactionCategorySelect.innerHTML += '<option value="new">+ Crear nueva categoría</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar categorías:", error);
+                });
+        }
+
+        // Mostrar modal para agregar/editar transacción
+        function showTransactionModal(transactionId = null) {
+            if (!currentProjectId) {
+                alert('Primero seleccione un proyecto');
+                return;
+            }
+            
+            // Limpiar formulario
+            transactionForm.reset();
+            editTransactionId.value = '';
+            transactionProjectId.value = currentProjectId;
+            newCategoryGroup.style.display = 'none';
+            
+            // Configurar título
+            if (transactionId) {
+                transactionModalTitle.textContent = 'Editar Transacción';
+                
+                // Buscar la transacción
+                const transaccion = projectTransactions.find(t => t.id === transactionId);
+                if (transaccion) {
+                    editTransactionId.value = transactionId;
+                    transactionTypeSelect.value = transaccion.tipo;
+                    transactionCategorySelect.value = transaccion.categoria;
+                    transactionDescription.value = transaccion.descripcion;
+                    transactionAmount.value = transaccion.monto;
+                    transactionDate.value = transaccion.fecha ? new Date(transaccion.fecha).toISOString().split('T')[0] : '';
+                }
+            } else {
+                transactionModalTitle.textContent = 'Nueva Transacción';
+                // Establecer fecha por defecto como hoy
+                transactionDate.valueAsDate = new Date();
+            }
+            
+            // Mostrar modal
+            transactionModal.style.display = 'flex';
+        }
+
+        // Guardar transacción
+        function saveTransaction(e) {
+            e.preventDefault();
+            
+            if (!currentProjectId) {
+                alert('No hay proyecto seleccionado');
+                return;
+            }
+            
+            const transactionId = editTransactionId.value;
+            const tipo = transactionTypeSelect.value;
+            let categoria = transactionCategorySelect.value;
+            const descripcion = transactionDescription.value;
+            const monto = parseFloat(transactionAmount.value);
+            const fecha = new Date(transactionDate.value);
+            
+            // Si se está creando una nueva categoría
+            if (categoria === 'new') {
+                categoria = newCategoryName.value.trim();
+                if (!categoria) {
+                    alert('Por favor ingrese un nombre para la nueva categoría');
+                    return;
+                }
+            }
+            
+            const transaccionData = {
+                tipo: tipo,
+                categoria: categoria,
+                descripcion: descripcion,
+                monto: monto,
+                fecha: fecha,
+                fechaCreacion: transactionId ? undefined : new Date()
+            };
+            
+            // Obtener el proyecto actual
+            db.collection("proyectos").doc(currentProjectId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const proyecto = doc.data();
+                        let transacciones = proyecto.transacciones || [];
+                        let categorias = proyecto.categorias || [];
+                        
+                        if (transactionId) {
+                            // Actualizar transacción existente
+                            const index = transacciones.findIndex(t => t.id === transactionId);
+                            if (index !== -1) {
+                                transacciones[index] = { ...transacciones[index], ...transaccionData };
+                            }
+                        } else {
+                            // Agregar nueva transacción
+                            transaccionData.id = generateId();
+                            transacciones.push(transaccionData);
+                        }
+                        
+                        // Agregar categoría si es nueva
+                        if (!categorias.includes(categoria)) {
+                            categorias.push(categoria);
+                        }
+                        
+                        // Actualizar proyecto
+                        return db.collection("proyectos").doc(currentProjectId).update({
+                            transacciones: transacciones,
+                            categorias: categorias,
+                            fechaActualizacion: new Date()
+                        });
+                    }
+                })
+                .then(() => {
+                    alert('Transacción guardada correctamente');
+                    transactionModal.style.display = 'none';
+                    loadProjectTransactions();
+                    loadProjectCategories();
+                })
+                .catch(error => {
+                    console.error("Error al guardar transacción:", error);
+                    alert('Error al guardar transacción: ' + error.message);
+                });
+        }
+
+        // Editar transacción
+        function editTransaction(transactionId) {
+            showTransactionModal(transactionId);
+        }
+
+        // Eliminar transacción
+        function deleteTransaction(transactionId) {
+            if (!confirm('¿Está seguro de que desea eliminar esta transacción?')) {
+                return;
+            }
+            
+            db.collection("proyectos").doc(currentProjectId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const proyecto = doc.data();
+                        let transacciones = proyecto.transacciones || [];
+                        
+                        // Filtrar la transacción a eliminar
+                        transacciones = transacciones.filter(t => t.id !== transactionId);
+                        
+                        // Actualizar proyecto
+                        return db.collection("proyectos").doc(currentProjectId).update({
+                            transacciones: transacciones,
+                            fechaActualizacion: new Date()
+                        });
+                    }
+                })
+                .then(() => {
+                    alert('Transacción eliminada correctamente');
+                    loadProjectTransactions();
+                })
+                .catch(error => {
+                    console.error("Error al eliminar transacción:", error);
+                    alert('Error al eliminar transacción: ' + error.message);
+                });
+        }
+
+        // Editar proyecto
+        function editProject(projectId) {
+            showProjectModal(projectId);
+        }
+
+        // Eliminar proyecto
+        function deleteProject(projectId) {
+            if (!confirm('¿Está seguro de que desea eliminar este proyecto? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            db.collection("proyectos").doc(projectId).delete()
+                .then(() => {
+                    alert('Proyecto eliminado correctamente');
+                    loadProjects();
+                    if (currentProjectId === projectId) {
+                        projectDetailsSection.style.display = 'none';
+                        currentProjectId = null;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al eliminar proyecto:", error);
+                    alert('Error al eliminar proyecto: ' + error.message);
+                });
+        }
+
+        // Cerrar proyecto (completar)
+        function closeProject() {
+            if (!currentProjectId) {
+                alert('No hay proyecto seleccionado');
+                return;
+            }
+            
+            if (!confirm('¿Está seguro de que desea cerrar este proyecto? Una vez cerrado, no se podrán agregar más transacciones.')) {
+                return;
+            }
+            
+            db.collection("proyectos").doc(currentProjectId).update({
+                estado: 'completed',
+                fechaActualizacion: new Date()
+            })
+            .then(() => {
+                alert('Proyecto cerrado correctamente');
+                loadProjects();
+                viewProject(currentProjectId);
+            })
+            .catch(error => {
+                console.error("Error al cerrar proyecto:", error);
+                alert('Error al cerrar proyecto: ' + error.message);
+            });
+        }
+
+        // Generar ID único para transacciones
+        function generateId() {
+            return 'trans_' + Math.random().toString(36).substr(2, 9);
         }
 
         // Inicializar la aplicación cuando se carga la página
