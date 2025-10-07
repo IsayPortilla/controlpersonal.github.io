@@ -334,6 +334,7 @@
 </body>
 </html>-->
 
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -1325,6 +1326,474 @@
             margin-bottom: 20px;
         }
 
+        /* Estilos para Vista de Cartas */
+        .view-controls {
+            display: flex;
+            gap: 10px;
+            margin-right: auto;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        /* Vista Grid */
+        .cards-grid-view {
+            display: none;
+        }
+
+        .cards-grid-view.active {
+            display: block;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        /* Vista Lista */
+        .cards-list-view {
+            display: none;
+        }
+
+        .cards-list-view.active {
+            display: block;
+        }
+
+        .cards-list-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        /* Tarjetas de usuario */
+        .user-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #3498db;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-card.grid-view {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .user-card.list-view {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .user-card-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .user-card-info {
+            flex: 1;
+        }
+
+        .user-card-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+
+        .user-card-email {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .user-card-area {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #495057;
+            border: 1px solid #e9ecef;
+        }
+
+        .user-card-status {
+            margin: 10px 0;
+        }
+
+        .user-card-current-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .user-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .user-card-actions.grid-view {
+            margin-top: auto;
+        }
+
+        .user-card-actions.list-view {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .quick-status-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            background: var(--color-secondary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            flex: 1;
+        }
+
+        .quick-status-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .user-card-location {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-card-location::before {
+            content: "📍";
+        }
+
+        .user-card-time {
+            font-size: 11px;
+            color: #aaa;
+            text-align: right;
+        }
+
+        /* Estados de carga */
+        .loading-cards {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--color-secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .empty-state-cards {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-cards::before {
+            content: "👥";
+            font-size: 48px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* Modal rápido */
+        .quick-modal .modal-content {
+            max-width: 500px;
+            padding: 25px;
+        }
+
+        .quick-status-content {
+            text-align: center;
+        }
+
+        .current-status-info {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .current-status-info p {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .quick-status-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-status-btn-modal {
+            padding: 12px 8px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-status-btn-modal:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .user-card.grid-view {
+                min-height: 160px;
+                padding: 15px;
+            }
+
+            .user-card.list-view {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .user-card-actions.list-view {
+                justify-content: center;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .filter-controls select {
+                min-width: 100%;
+            }
+
+            .view-controls {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .module-actions {
+                gap: 15px;
+            }
+
+            .quick-status-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-status-btn-modal {
+                min-height: 45px;
+                font-size: 12px;
+            }
+
+            .user-card-name {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-grid {
+                gap: 10px;
+            }
+
+            .user-card {
+                padding: 12px;
+            }
+
+            .quick-status-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .user-card-actions.grid-view {
+                flex-direction: column;
+            }
+
+            .quick-status-btn {
+                padding: 10px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1440px) {
+            .cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1441px) {
+            .cards-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Estados de usuario en las tarjetas */
+        .user-card.status-oficina {
+            border-left-color: var(--color-oficina);
+        }
+
+        .user-card.status-muestreo {
+            border-left-color: var(--color-muestreo);
+        }
+
+        .user-card.status-salidaSR {
+            border-left-color: var(--color-salidaSR);
+        }
+
+        .user-card.status-salidaCR {
+            border-left-color: var(--color-salidaCR);
+        }
+
+        .user-card.status-descanso {
+            border-left-color: var(--color-descanso);
+        }
+
+        .user-card.status-vacaciones {
+            border-left-color: var(--color-vacaciones);
+        }
+
+        .user-card.status-vacacionesTxt {
+            border-left-color: var(--color-vacacionesTxt);
+        }
+
+        .user-card.status-salida {
+            border-left-color: var(--color-salida);
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Efectos de hover mejorados */
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .user-card:hover::before {
+            left: 100%;
+        }
+
+        /* Scroll personalizado para lista */
+        .cards-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cards-list-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .cards-list-container::-webkit-scrollbar-thumb {
+            background: var(--color-secondary);
+            border-radius: 3px;
+        }
+
+        .cards-list-container::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+
         /* Responsive Styles */
         @media (max-width: 768px) {
             .sidebar {
@@ -1441,6 +1910,11 @@
                     <a href="#" class="menu-item" data-module="movimientos">
                         <span class="menu-icon">🔄</span>
                         <span class="menu-text">Movimientos</span>
+                    </a>
+                    <div class="menu-title">Vista Rápida</div>
+                    <a href="#" class="menu-item" data-module="vista-cartas">
+                        <span class="menu-icon">🃏</span>
+                        <span class="menu-text">Vista de Cartas</span>
                     </a>
                 </div>
 
@@ -1652,6 +2126,7 @@
                         </table>
                     </div>
                 </div>
+
                 <!-- Mi Panel Module -->
                 <div id="mi-panel-module" class="module">
                     <div class="module-header">
@@ -1719,6 +2194,95 @@
                         </table>
                     </div>
                 </div>
+
+
+                <div id="vista-cartas-module" class="module">
+                    <div class="module-header">
+                        <h2 class="module-title">Vista de Cartas - Control de Estado</h2>
+                        <p class="module-description">Cambio rápido de estado para todo el personal de muestreo</p>
+                    </div>
+
+                    <div class="module-actions">
+                        <div class="view-controls">
+                            <button class="btn btn-secondary active" data-view="grid" onclick="changeView('grid')">
+                                <span class="mobile-hidden">Vista Grid</span>
+                                <span class="mobile-only">⏹️</span>
+                            </button>
+                            <button class="btn btn-secondary" data-view="list" onclick="changeView('list')">
+                                <span class="mobile-hidden">Vista Lista</span>
+                                <span class="mobile-only">📋</span>
+                            </button>
+                        </div>
+                        <div class="filter-controls">
+                            <select id="cardsAreaFilter" onchange="loadUsersCards()">
+                                <option value="todos">Todas las áreas</option>
+                            </select>
+                            <select id="cardsStatusFilter" onchange="loadUsersCards()">
+                                <option value="todos">Todos los estados</option>
+                                <option value="oficina">Oficina</option>
+                                <option value="muestreo">Muestreo</option>
+                                <option value="salidaSR">Salida Intermitente</option>
+                                <option value="salidaCR">Salida con regreso</option>
+                                <option value="descanso">Descanso</option>
+                                <option value="vacaciones">Vacaciones</option>
+                                <option value="vacacionesTxt">Permiso TxT</option>
+                                <option value="salida">Salida</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="loadUsersCards()">
+                                <span class="mobile-hidden">Actualizar</span>
+                                <span class="mobile-only">🔄</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Vista Grid -->
+                    <div id="cardsGridView" class="cards-grid-view active">
+                        <div class="cards-grid" id="usersCardsGrid">
+                            <div class="loading-cards">
+                                <div class="loading-spinner"></div>
+                                <p>Cargando usuarios...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vista Lista -->
+                    <div id="cardsListView" class="cards-list-view">
+                        <div class="cards-list-container">
+                            <div class="cards-list" id="usersCardsList">
+                                <div class="loading-cards">
+                                    <div class="loading-spinner"></div>
+                                    <p>Cargando usuarios...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal rápido de cambio de estado -->
+                    <div id="quickStatusModal" class="modal quick-modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title" id="quickStatusUserName">Cambiar Estado</h3>
+                                <button class="close-modal" onclick="closeQuickStatusModal()">&times;</button>
+                            </div>
+                            <div class="quick-status-content">
+                                <div class="current-status-info">
+                                    <p>Estado actual: <span id="currentUserStatus" class="status-badge"></span></p>
+                                    <p id="currentUserLocation">Ubicación: Cargando...</p>
+                                </div>
+                                <div class="quick-status-buttons" id="quickStatusButtons">
+                                    <!-- Los botones se generarán dinámicamente -->
+                                </div>
+                                <div class="quick-actions">
+                                    <button class="btn btn-secondary" onclick="getCurrentLocation()">
+                                        <span class="mobile-hidden">Actualizar Ubicación</span>
+                                        <span class="mobile-only">📍 Ubicación</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- Mi Configuración Module -->
                 <div id="mi-configuracion-module" class="module">
@@ -2685,6 +3249,8 @@
         let currentProject = null;
         let projectTransactions = [];
         let transactionCategories = {};
+        let currentView = 'grid';
+        let currentQuickUser = null;
 
         // Estados de usuarios
         const estados = {
@@ -2712,7 +3278,8 @@
             'configuracion-modulos': { nombre: 'Permisos de Módulos', icono: '🔒' },
             'menu-general': { nombre: 'Menú General', icono: '🗃️' },
             'mi-panel': { nombre: 'Mi Panel', icono: '👤' },
-            'mi-configuracion': { nombre: 'Mi Configuración', icono: '⚙️' }
+            'mi-configuracion': { nombre: 'Mi Configuración', icono: '⚙️' },
+            'vista-cartas': { nombre: 'Vista de Cartas', icono: '🃏' }
         };
 
         // Inicializar la aplicación
@@ -2959,8 +3526,42 @@
                 case 'mi-configuracion':
                     loadMyConfiguration();
                     break;
+                case 'vista-cartas':
+                    loadUsersCards();
+                    // Cargar filtros de área
+                    cargarAreasParaSelectores().then(() => {
+                        actualizarSelectoresArea();
+                    });
+                    break;
             }
         }
+        // Inicializar vista de cartas cuando se carga el módulo
+        document.addEventListener('DOMContentLoaded', function () {
+            // Agregar estilos para notificaciones
+            const style = document.createElement('style');
+            style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    `;
+            document.head.appendChild(style);
+        });
         // Función para cargar el panel personal
         function loadMyPanel() {
             if (!currentUser) return;
@@ -3289,7 +3890,8 @@
                             'configuracion-modulos': { roles: ['administrador'], areas: ['todos'] },
                             'menu-general': { roles: ['administrador', 'usuario'], areas: ['todos'] },
                             'mi-panel': { roles: ['administrador', 'usuario'], areas: ['todos'] },
-                            'mi-configuracion': { roles: ['administrador', 'usuario'], areas: ['todos'] }
+                            'mi-configuracion': { roles: ['administrador', 'usuario'], areas: ['todos'] },
+                            'vista-cartas': { roles: ['administrador', 'usuario'], areas: ['todos'] }
                         };
 
                         // Guardar configuración por defecto
@@ -5907,6 +6509,329 @@
                 .catch(error => {
                     alert('Error al verificar usuarios: ' + error.message);
                 });
+        }
+
+        // Función para cambiar entre vistas
+        function changeView(viewType) {
+            currentView = viewType;
+
+            // Actualizar botones activos
+            document.querySelectorAll('.view-controls .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-view="${viewType}"]`).classList.add('active');
+
+            // Mostrar/ocultar vistas
+            document.getElementById('cardsGridView').classList.toggle('active', viewType === 'grid');
+            document.getElementById('cardsListView').classList.toggle('active', viewType === 'list');
+
+            // Recargar datos si es necesario
+            if (document.getElementById('vista-cartas-module').classList.contains('active')) {
+                loadUsersCards();
+            }
+        }
+
+        // Función para cargar usuarios en vista de cartas
+        function loadUsersCards() {
+            const gridContainer = document.getElementById('usersCardsGrid');
+            const listContainer = document.getElementById('usersCardsList');
+
+            // Mostrar estado de carga
+            gridContainer.innerHTML = `
+        <div class="loading-cards">
+            <div class="loading-spinner"></div>
+            <p>Cargando usuarios...</p>
+        </div>
+    `;
+            listContainer.innerHTML = `
+        <div class="loading-cards">
+            <div class="loading-spinner"></div>
+            <p>Cargando usuarios...</p>
+        </div>
+    `;
+
+            const areaFilter = document.getElementById('cardsAreaFilter').value;
+            const statusFilter = document.getElementById('cardsStatusFilter').value;
+
+            let query = db.collection("usuarios").where("nombre", "!=", "Usuario");
+
+            if (areaFilter !== 'todos') {
+                query = query.where("area", "==", areaFilter);
+            }
+
+            query.get()
+                .then((querySnapshot) => {
+                    gridContainer.innerHTML = '';
+                    listContainer.innerHTML = '';
+
+                    if (querySnapshot.empty) {
+                        const emptyHTML = `
+                    <div class="empty-state-cards">
+                        <p>No hay usuarios registrados</p>
+                        <p class="empty-subtitle">Intenta cambiar los filtros</p>
+                    </div>
+                `;
+                        gridContainer.innerHTML = emptyHTML;
+                        listContainer.innerHTML = emptyHTML;
+                        return;
+                    }
+
+                    let hasUsers = false;
+
+                    querySnapshot.forEach((doc) => {
+                        const usuario = doc.data();
+
+                        // Aplicar filtro de estado
+                        if (statusFilter !== 'todos' && usuario.estado !== statusFilter) {
+                            return;
+                        }
+
+                        hasUsers = true;
+                        usuario.id = doc.id;
+
+                        // Crear tarjeta para vista grid
+                        const gridCard = createUserCard(usuario, 'grid');
+                        gridContainer.appendChild(gridCard);
+
+                        // Crear tarjeta para vista lista
+                        const listCard = createUserCard(usuario, 'list');
+                        listContainer.appendChild(listCard);
+                    });
+
+                    if (!hasUsers) {
+                        const emptyHTML = `
+                    <div class="empty-state-cards">
+                        <p>No hay usuarios con los filtros seleccionados</p>
+                        <button class="btn btn-primary" onclick="document.getElementById('cardsAreaFilter').value='todos'; document.getElementById('cardsStatusFilter').value='todos'; loadUsersCards();">
+                            Mostrar todos
+                        </button>
+                    </div>
+                `;
+                        gridContainer.innerHTML = emptyHTML;
+                        listContainer.appendChild(document.createElement('div')).innerHTML = emptyHTML;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al cargar usuarios: ", error);
+                    const errorHTML = `
+                <div class="empty-state-cards">
+                    <p>Error al cargar los usuarios</p>
+                    <button class="btn btn-primary" onclick="loadUsersCards()">
+                        Reintentar
+                    </button>
+                </div>
+            `;
+                    gridContainer.innerHTML = errorHTML;
+                    listContainer.innerHTML = errorHTML;
+                });
+        }
+
+        // Función para crear tarjeta de usuario
+        function createUserCard(usuario, viewType) {
+            const card = document.createElement('div');
+            card.className = `user-card ${viewType}-view status-${usuario.estado}`;
+
+            const estadoInfo = estados[usuario.estado] || estados.muestreo;
+            const fecha = usuario.ultimaActualizacion ? usuario.ultimaActualizacion.toDate() : new Date();
+            const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
+
+            if (viewType === 'grid') {
+                card.innerHTML = `
+            <div class="user-card-header">
+                <div class="user-card-info">
+                    <div class="user-card-name">${nombreCompleto || 'Usuario'}</div>
+                    <div class="user-card-email">${usuario.email || 'N/A'}</div>
+                    <div class="user-card-area">${usuario.area || 'No asignada'}</div>
+                </div>
+            </div>
+            <div class="user-card-status">
+                <span class="user-card-current-status ${estadoInfo.clase}">
+                    ${estadoInfo.texto}
+                </span>
+            </div>
+            <div class="user-card-location">
+                ${usuario.ubicacion || 'Ubicación no disponible'}
+            </div>
+            <div class="user-card-time">
+                ${fecha.toLocaleTimeString()}
+            </div>
+            <div class="user-card-actions grid-view">
+                <button class="quick-status-btn" onclick="openQuickStatusModal('${usuario.id}')">
+                    Cambiar Estado
+                </button>
+            </div>
+        `;
+            } else {
+                // Vista lista
+                card.innerHTML = `
+            <div class="user-card-info">
+                <div class="user-card-name">${nombreCompleto || 'Usuario'}</div>
+                <div class="user-card-email">${usuario.email || 'N/A'}</div>
+            </div>
+            <div class="user-card-status">
+                <span class="user-card-current-status ${estadoInfo.clase}">
+                    ${estadoInfo.texto}
+                </span>
+            </div>
+            <div class="user-card-actions list-view">
+                <button class="quick-status-btn" onclick="openQuickStatusModal('${usuario.id}')">
+                    Cambiar
+                </button>
+            </div>
+        `;
+            }
+
+            return card;
+        }
+
+        // Función para abrir modal rápido de cambio de estado
+        function openQuickStatusModal(userId) {
+            currentQuickUser = userId;
+
+            db.collection("usuarios").doc(userId).get()
+                .then(doc => {
+                    if (doc.exists) {
+                        const usuario = doc.data();
+                        const estadoInfo = estados[usuario.estado] || estados.muestreo;
+                        const nombreCompleto = `${usuario.nombre || ''} ${usuario.apellidoPaterno || ''} ${usuario.apellidoMaterno || ''}`.trim();
+
+                        document.getElementById('quickStatusUserName').textContent = `Cambiar Estado - ${nombreCompleto}`;
+                        document.getElementById('currentUserStatus').textContent = estadoInfo.texto;
+                        document.getElementById('currentUserStatus').className = `status-badge ${estadoInfo.clase}`;
+                        document.getElementById('currentUserLocation').textContent = `Ubicación: ${usuario.ubicacion || 'No disponible'}`;
+
+                        // Generar botones de estado
+                        const buttonsContainer = document.getElementById('quickStatusButtons');
+                        buttonsContainer.innerHTML = '';
+
+                        Object.keys(estados).forEach(key => {
+                            const estado = estados[key];
+                            if (key !== usuario.estado) { // No mostrar el estado actual
+                                const button = document.createElement('button');
+                                button.type = 'button';
+                                button.className = 'quick-status-btn-modal';
+                                button.style.backgroundColor = estado.color;
+                                button.innerHTML = estado.texto;
+                                button.onclick = () => quickChangeStatus(key);
+
+                                buttonsContainer.appendChild(button);
+                            }
+                        });
+
+                        document.getElementById('quickStatusModal').style.display = 'flex';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al cargar usuario:", error);
+                    alert("Error al cargar información del usuario");
+                });
+        }
+
+        // Función para cerrar modal rápido
+        function closeQuickStatusModal() {
+            document.getElementById('quickStatusModal').style.display = 'none';
+            currentQuickUser = null;
+        }
+
+        // Función para cambio rápido de estado
+        function quickChangeStatus(nuevoEstado) {
+            if (!currentQuickUser) return;
+
+            obtenerUbicacion().then(ubicacion => {
+                db.collection("usuarios").doc(currentQuickUser).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            const usuario = doc.data();
+                            const estadoAnterior = usuario.estado;
+
+                            db.collection("usuarios").doc(currentQuickUser).update({
+                                estado: nuevoEstado,
+                                ultimaActualizacion: new Date(),
+                                ubicacion: ubicacion
+                            })
+                                .then(() => {
+                                    // Registrar movimiento
+                                    registrarMovimiento(
+                                        currentQuickUser,
+                                        estadoAnterior,
+                                        nuevoEstado,
+                                        "Cambio rápido desde vista cartas",
+                                        currentUser.uid
+                                    );
+
+                                    // Cerrar modal y recargar
+                                    closeQuickStatusModal();
+                                    loadUsersCards();
+
+                                    // Mostrar notificación
+                                    showNotification(`Estado cambiado a: ${estados[nuevoEstado].texto}`, 'success');
+                                })
+                                .catch(error => {
+                                    console.error("Error al cambiar estado:", error);
+                                    showNotification("Error al cambiar estado", 'error');
+                                });
+                        }
+                    });
+            }).catch(error => {
+                console.error("Error al obtener ubicación:", error);
+                // Cambiar estado sin ubicación
+                db.collection("usuarios").doc(currentQuickUser).update({
+                    estado: nuevoEstado,
+                    ultimaActualizacion: new Date()
+                })
+                    .then(() => {
+                        closeQuickStatusModal();
+                        loadUsersCards();
+                        showNotification(`Estado cambiado a: ${estados[nuevoEstado].texto}`, 'success');
+                    });
+            });
+        }
+
+        // Función para obtener ubicación actual
+        function getCurrentLocation() {
+            obtenerUbicacion().then(ubicacion => {
+                document.getElementById('currentUserLocation').textContent = `Ubicación: ${ubicacion}`;
+                showNotification('Ubicación actualizada', 'success');
+            }).catch(error => {
+                showNotification('Error al obtener ubicación', 'error');
+            });
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-message">${message}</span>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+        </div>
+    `;
+
+            // Estilos para la notificación
+            notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#F44336' : '#2196F3'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 300px;
+    `;
+
+            document.body.appendChild(notification);
+
+            // Auto-remover después de 3 segundos
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
         }
 
         // Generar PDF
